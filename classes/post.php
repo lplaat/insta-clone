@@ -57,11 +57,28 @@ class Post {
     }
 
     function upload() {
-        # Todo: Uploads the post to the database
+        # Uploads the post to the database
+        # ToDo: Image upload
+        $query = "INSERT INTO posts (user_id, `text`) VALUES (?, ?)";
+
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$this->user->id, $this->text]);
     }
 
     function delete() {
-        # Todo: Deletes the post from the database
+        # Deletes the post from the database
+        $query = "DELETE FROM posts WHERE id = ?";
+        $qryimg = "DELETE FROM images_post WHERE post_id = ?";
+        $qrylike = "DELETE FROM users_likes WHERE post_id = ?";
+
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$this->id]);
+
+        $stmt = $GLOBALS['conn']->prepare($qryimg);
+        $stmt->execute([$this->id]);
+
+        $stmt = $GLOBALS['conn']->prepare($qrylike);
+        $stmt->execute([$this->id]);
     }
 
     function isLikedByUser($userId) {
@@ -69,7 +86,7 @@ class Post {
         $query = "SELECT * FROM users_likes WHERE user_id = ? AND post_id = ?";
 
         $stmt = $GLOBALS['conn']->prepare($query);
-        $stmt->execute([$userId, $this->$id]);
+        $stmt->execute([$userId, $this->id]);
 
         $result = $stmt->fetchAll();
         return count($result) != 0;
