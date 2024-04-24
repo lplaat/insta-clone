@@ -1,0 +1,15 @@
+.green-text {
+	color: #23d160 !important;
+}
+
+.red-text {
+	color: #ff3860 !important;
+}
+
+.is-danger-navbar-item {
+    background-color: #ff3860;
+}
+
+.is-danger-navbar-item:hover {
+    background-color: #b82845 !important;
+}
