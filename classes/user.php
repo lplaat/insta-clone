@@ -19,10 +19,32 @@ class User {
             return null;
         }
 
-        // Set values and return a success
+        # Set values and return a success
         $this->password = $result[0]['password'];
 
         return true;
+    }
+
+    function getById($id){
+        # Returns the user by id
+        $query = "SELECT * FROM users WHERE id = ?";
+
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$id]);
+
+        $result = $stmt->fetchAll();
+        if (count($result) == 0) {
+            return null;
+        }
+
+        # Set values and return a success
+        $this->password = $result[0]['password'];
+
+        return true;
+    }
+
+    function create(){
+        # Todo: Create account in the database
     }
 
     function login($username, $rawPassword){
