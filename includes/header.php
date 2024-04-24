@@ -33,5 +33,5 @@ $post->getById(1);
 
 <?php 
     if(!isset($emptyMain)) {
-        include "components/navbar.php";
+        include "components/sidebar.php";
     }

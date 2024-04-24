@@ -1,3 +1,7 @@
+body{
+    width: 100%;
+    height: 100vh;
+}
 .green-text {
 	color: #23d160 !important;
 }
@@ -13,3 +17,23 @@
 .is-danger-navbar-item:hover {
     background-color: #b82845 !important;
 }
+
+.is-primary {
+    background-color: #958D79 !important; 
+}
+
+.menu {
+    position: sticky;
+    display: inline-block;
+    vertical-align: top;
+    max-height: 100vh;
+    overflow-y: auto;
+    width: 200px;
+    top: 0;
+    bottom: 0;
+    padding: 30px;
+  }
+  
+  .content {
+    display: inline-block;
+  }
