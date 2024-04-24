@@ -29,5 +29,5 @@ $GLOBALS['conn'] = Database::connect();
 
 <?php 
     if(!isset($emptyMain)) {
-        include "components/navbar.php";
+        include "components/sidebar.php";
     }

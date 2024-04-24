@@ -32,9 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 ?>
 
-<section class="section">
-    <div class="container">
-        <div class="columns is-centered">
+<section class="section is-fullheight">
+    <div class="container is-fullheight">
+        <div class="columns is-centered is-vcentered is-fullheight">
             <div class="column is-half">
                 <div class="box login-container">
                     <h1 class="title has-text-centered">Login to InstaClone</h1>
