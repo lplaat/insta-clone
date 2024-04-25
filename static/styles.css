@@ -26,14 +26,19 @@ body{
     position: sticky;
     display: inline-block;
     vertical-align: top;
-    max-height: 100vh;
-    overflow-y: auto;
+    height: 100vh;
     width: 200px;
     top: 0;
     bottom: 0;
     padding: 30px;
-  }
+}
   
-  .content {
+.content {
     display: inline-block;
-  }
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 10%);
+}
