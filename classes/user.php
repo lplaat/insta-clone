@@ -4,6 +4,7 @@ require_once "classes/database.php";
 require_once "classes/authentication.php";
 
 class User {
+    public $id;
     public $name;
     public $password;
 
@@ -20,6 +21,7 @@ class User {
         }
 
         # Set values and return a success
+        $this->id = $result[0]['id'];
         $this->password = $result[0]['password'];
 
         return true;
@@ -38,13 +40,25 @@ class User {
         }
 
         # Set values and return a success
+        $this->id = $id;
         $this->password = $result[0]['password'];
 
         return true;
     }
 
     function create(){
-        # Todo: Create account in the database
+        # Create account in the database
+        $return = $this->getByName($this->name);
+        if ($return != null) {
+            return false;
+        }
+
+        $query = "INSERT INTO users (username, `password`) VALUES (?, ?)";
+
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$this->name, password_hash($this->password, PASSWORD_DEFAULT)]);
+
+        return true;
     }
 
     function login($username, $rawPassword){
