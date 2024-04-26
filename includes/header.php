@@ -15,10 +15,6 @@ Session::start();
 Authentication::verify();
 $GLOBALS['conn'] = Database::connect();
 
-require_once "classes/post.php";
-$post = new Post();
-$post->getById(1);
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
