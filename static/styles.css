@@ -27,7 +27,7 @@ body{
     display: inline-block;
     vertical-align: top;
     height: 100vh;
-    width: 200px;
+    min-width: 250px;
     top: 0;
     bottom: 0;
     padding: 30px;
