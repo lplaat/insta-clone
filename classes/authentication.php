@@ -29,6 +29,6 @@ class Authentication {
     public static function userLogins($user) {
         # Sets the session values when a user logins
         $_SESSION['loggedIn'] = true;
-        $_SESSION['user'] = $user;
+        $_SESSION['userId'] = $user->id;
     }
 }
