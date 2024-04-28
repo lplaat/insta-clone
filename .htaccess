@@ -8,6 +8,8 @@ RewriteRule ^$ ./pages/index.php [L]
 RewriteRule ^login$ ./pages/users/login.php [L]
 RewriteRule ^signup$ ./pages/users/signup.php [L]
 
+RewriteRule ^post/upload$ ./pages/posts/upload.php [L]
+
 # Prevent accessing any .php from file
 RewriteCond %{THE_REQUEST} \.php [NC]
 RewriteRule ^ - [R=404,L]
