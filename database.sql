@@ -21,8 +21,8 @@ CREATE TABLE `posts` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `text` text NOT NULL,
-  `liked_amount` int(11) NOT NULL,
-  `comment_amount` int(11) NOT NULL,
+  `liked_amount` int(11) NOT NULL DEFAULT 0,
+  `comment_amount` int(11) NOT NULL DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
