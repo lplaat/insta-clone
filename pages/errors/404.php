@@ -4,7 +4,7 @@
 require 'includes/header.php';
 ?>
 
-<h1>Home</h1>
+<h1>404 Page not found</h1>
 
 <?php
 # Include footer

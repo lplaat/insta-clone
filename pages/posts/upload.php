@@ -1,7 +1,7 @@
 <?php
 
 # Includes
-require './../../includes/header.php';
+require 'includes/header.php';
 require_once 'classes/user.php';
 require_once 'classes/post.php';
 
@@ -69,4 +69,4 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 <?php
 # Include footer
-require './includes/footer.php';
+require 'includes/footer.php';
