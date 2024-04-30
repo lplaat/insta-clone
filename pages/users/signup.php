@@ -2,8 +2,8 @@
 
 # Includes
 $emptyMain = true;
-require './../../includes/header.php';
-require_once './classes/user.php';
+require 'includes/header.php';
+require_once 'classes/user.php';
 
 $status = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') { 
@@ -86,4 +86,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <?php
 # Include footer
-require './includes/footer.php';
+require 'includes/footer.php';
