@@ -108,7 +108,7 @@ class Post {
     }
 
     function isLikedByUser($userId) {
-        # Returns a boolean ifthe post is liked by the user
+        # Returns a boolean if the post is liked by the user
         $query = "SELECT * FROM users_likes WHERE user_id = ? AND post_id = ?";
 
         $stmt = $GLOBALS['conn']->prepare($query);

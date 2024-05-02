@@ -10,7 +10,9 @@ class User {
 
     function __construct($userId = null) {
         # Sets user with the id given
-        $this->getById($userId);
+        if($userId != null) {
+            $this->getById($userId);
+        }
     }
 
     private function getByAny($stmt, $values){
