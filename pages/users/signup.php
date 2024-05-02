@@ -6,17 +6,17 @@ require 'includes/header.php';
 require_once 'classes/user.php';
 
 $status = '';
-if ($_SERVER['REQUEST_METHOD'] == 'POST') { 
+if($_SERVER['REQUEST_METHOD'] == 'POST') { 
     # Signup process
     $username = isset($_POST['username']) ? $_POST['username'] : '';
     $password = isset($_POST['password']) ? $_POST['password'] : '';
     $confirmPassword = isset($_POST['confirmPassword']) ? $_POST['confirmPassword'] : '';
 
-    if ($password != $confirmPassword) {
+    if($password != $confirmPassword) {
         $status = 'passwordNotTheSame';
-    } elseif (strlen($password) < 8 && strlen($password) > 18) {
+    } elseif(strlen($password) < 8 && strlen($password) > 18) {
         $status = 'passwordNotValid';
-    } elseif (strlen($username) < 3 && strlen($username) > 12) {
+    } elseif(strlen($username) < 3 && strlen($username) > 12) {
         $status = 'usernameNotValid';
     } else {
         $user = New User();
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $user->password = $password;
 
         $success = $user->create();
-        if ($success) {
+        if($success) {
             $status = 'accountCreated';
             header("Refresh: 2; url=/login");
         }else {
@@ -70,11 +70,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         <div class="field">
                             <?php
-                                if ($status == "accountCreated") echo '<p class="subtitle is-6 has-text-centered green-text">You\'re account is created!</p>';
-                                if ($status == "passwordNotTheSame") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re passwords are not the same!</p>';
-                                if ($status == "passwordNotValid") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re passwords needs to be longer than 8 characters and shorter then 18!</p>';
-                                if ($status == "usernameNotValid") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re username needs to be longer than 3 characters and shorter then 12!</p>';
-                                if ($status == "usernameTaken") echo '<p class="subtitle is-6 has-text-centered red-text">This username is already taken!</p>';
+                                if($status == "accountCreated") echo '<p class="subtitle is-6 has-text-centered green-text">You\'re account is created!</p>';
+                                if($status == "passwordNotTheSame") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re passwords are not the same!</p>';
+                                if($status == "passwordNotValid") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re passwords needs to be longer than 8 characters and shorter then 18!</p>';
+                                if($status == "usernameNotValid") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re username needs to be longer than 3 characters and shorter then 12!</p>';
+                                if($status == "usernameTaken") echo '<p class="subtitle is-6 has-text-centered red-text">This username is already taken!</p>';
                             ?>
                         </div> 
                     </form>

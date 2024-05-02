@@ -2,49 +2,56 @@
 
 require_once "classes/database.php";
 require_once "classes/user.php";
+require_once "classes/tools.php";
 
 class Post {
     public $id;
+    public $shortId;
     public $text;
     public $likedAmount;
     public $commentAmount;
+    public $following;
     public $images;
     public $user;
     public $createdAt;
 
-    function getById($id) {
-        # Load the post by id
-        $query = "SELECT * FROM posts WHERE id = ?";
-
-        $stmt = $GLOBALS['conn']->prepare($query);
-        $stmt->execute([$id]);
+    private function getByAny($stmt, $values) {
+        # Load the post by a stmt
+        $stmt->execute($values);
 
         $result = $stmt->fetchAll();
-        if (count($result) == 0) {
+        if(count($result) == 0) {
             return null;
         }
 
         # Set public from post variables
         $this->id = $result[0]['id'];
+        $this->shortId = $result[0]['short_id'];
         $this->text = $result[0]['text'];
         $this->likedAmount = $result[0]['liked_amount'];
         $this->commentAmount = $result[0]['comment_amount'];
         $this->createdAt = $result[0]['created_at'];
 
         # Get the owner of the post
-        $this->user = new User();
-        $this->user->getById($result[0]['user_id']);
+        $this->user = new User($result[0]['user_id']);
 
         # Get images from post
         $query = "SELECT * FROM images_post WHERE post_id = ?";
 
         $stmt = $GLOBALS['conn']->prepare($query);
-        $stmt->execute([$id]);
+        $stmt->execute([$this->id]);
 
         $images = array();
         $result = $stmt->fetchAll();
 
-        # Walk over each image and it public
+        # Checks ifthe session user is following
+        if(isset($_SESSION['userId'])) {
+            $this->following = $this->user->isFollowedBy($_SESSION['userId']);
+        } else {
+            $this->following = null;
+        }
+
+        # Walk over each image from the post
         foreach($result as $image){
             array_push($images, array(
                 "id" => $image['id'],
@@ -56,13 +63,32 @@ class Post {
         return true;
     }
 
+    function getById($id) {
+        # Loads in the post by id
+        $query = "SELECT * FROM posts WHERE id = ?";
+        $stmt = $GLOBALS['conn']->prepare($query);
+        return $this->getByAny($stmt, array($id));
+    }
+
+    function getByShortId($shortId) {
+        # Loads in the post by shortId
+        $query = "SELECT * FROM posts WHERE short_id = ?";
+        $stmt = $GLOBALS['conn']->prepare($query);
+        return $this->getByAny($stmt, array($shortId));
+    }
+
     function upload() {
         # Uploads the post to the database
-        # ToDo: Image upload
-        $query = "INSERT INTO posts (user_id, `text`) VALUES (?, ?)";
+        # ToDo: Image upload and verify that the shortId is not already in use!
+
+        # Generate a random id
+        $this->shortId = Tools::generateRandomString(12);
+
+        # Commit to the database
+        $query = "INSERT INTO posts (user_id, `text`, short_id) VALUES (?, ?, ?)";
 
         $stmt = $GLOBALS['conn']->prepare($query);
-        $stmt->execute([$this->user->id, $this->text]);
+        $stmt->execute([$this->user->id, $this->text, $this->shortId]);
     }
 
     function delete() {
@@ -90,5 +116,32 @@ class Post {
 
         $result = $stmt->fetchAll();
         return count($result) != 0;
+    }
+
+    function userLiked($userId, $likedStatus) {
+        # Sets the like status for the user
+        $dbStatus = $this->isLikedByUser($userId);
+        if($dbStatus == $likedStatus) {
+            return true;
+        }
+
+        $increment = 0;
+        if($likedStatus) {
+            $query = "INSERT INTO users_likes (user_id, post_id) VALUES (?, ?)";
+            $increment++;
+        } else {
+            $query = "DELETE FROM users_likes WHERE user_id = ? AND post_id = ?";
+            $increment--;
+        }
+
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$userId, $this->id]);
+
+        # Edited the like amount on post
+        $query = "UPDATE `posts` SET `liked_amount` = `liked_amount` + ? WHERE `id` = ?;";
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$increment, $this->id]);
+
+        return true;
     }
 }
