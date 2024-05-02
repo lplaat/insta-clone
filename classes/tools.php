@@ -54,6 +54,7 @@ class Tools {
             }
         }
     }
+
     public static function generateRandomString($length) {
         # Generates a string
         $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
@@ -65,5 +66,11 @@ class Tools {
         }
     
         return $randomString;
+    }
+
+    public static function isJson($string) {
+        # Verifies that the data is json
+        json_decode($string);
+        return json_last_error() === JSON_ERROR_NONE;
     }
 }
