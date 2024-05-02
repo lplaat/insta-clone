@@ -42,3 +42,18 @@ body{
     flex-direction: column;
     min-height: calc(100vh - 10%);
 }
+
+.tiny-card {
+    margin-left: 8px;
+    margin-top: 16px;
+    border-left: 4px solid orange;
+}
+
+.heart-icon {
+    color: red;
+}
+
+.right-side {
+    position: absolute;
+    right: 16px;
+}

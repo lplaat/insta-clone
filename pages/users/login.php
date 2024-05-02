@@ -7,7 +7,7 @@ require_once 'classes/user.php';
 require_once 'classes/session.php';
 
 $status = '';
-if ($_SERVER['REQUEST_METHOD'] == 'POST') { 
+if($_SERVER['REQUEST_METHOD'] == 'POST') { 
     # Login process
     $username = isset($_POST['username']) ? $_POST['username'] : '';
     $password = isset($_POST['password']) ? $_POST['password'] : '';
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         Session::end();
     }
 } else {
-    if (isset($_GET['logout'])) {
+    if(isset($_GET['logout'])) {
         # Logout process
         $status = 'logout';
         header("Refresh: 2; url=/login");
@@ -60,9 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         <div class="field">
                             <?php
-                                if ($status == "success") echo '<p class="subtitle is-6 has-text-centered green-text">You\'re successfully logged in!</p>';
-                                if ($status == "error") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re username or password is wrong!</p>';
-                                if ($status == "logout") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re now logging out!</p>';
+                                if($status == "success") echo '<p class="subtitle is-6 has-text-centered green-text">You\'re successfully logged in!</p>';
+                                if($status == "error") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re username or password is wrong!</p>';
+                                if($status == "logout") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re now logging out!</p>';
                             ?>
                         </div> 
                     </form>

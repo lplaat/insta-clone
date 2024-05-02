@@ -20,6 +20,7 @@ CREATE TABLE `images_post` (
 CREATE TABLE `posts` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
+  `short_id` varchar(12) NOT NULL,
   `text` text NOT NULL,
   `liked_amount` int(11) NOT NULL DEFAULT 0,
   `comment_amount` int(11) NOT NULL DEFAULT 0,
@@ -29,6 +30,11 @@ CREATE TABLE `posts` (
 CREATE TABLE `users_likes` (
   `user_id` int(11) NOT NULL,
   `post_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `users_follows` (
+  `follower_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 ALTER TABLE `images_post`

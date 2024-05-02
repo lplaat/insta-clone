@@ -1,6 +1,6 @@
 <?php
 
-if (!isset($emptyMain)){
+if(!isset($emptyMain)){
     echo '</div></div></div>';
 }
 
