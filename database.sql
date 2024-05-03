@@ -3,12 +3,16 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` text NOT NULL,
   `password` text NOT NULL,
+  `email` text NOT NULL,
+  `private` tinyint(1) NOT NULL DEFAULT 0,
+  `following` int(11) NOT NULL DEFAULT 0,
+  `followers` int(11) NOT NULL DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-INSERT INTO `users` (`id`, `username`, `password`, `created_at`) VALUES
-(1, 'admin', '$2y$10$vfZep2kwQIvsIYoghgx5iu8E8OIoBLTVm4O5NvJJ/ABq.Y9IyPIHu', '2024-04-17 19:50:32');
+INSERT INTO `users` (`id`, `username`, `password`, `email`) VALUES
+(1, 'admin', '$2y$10$vfZep2kwQIvsIYoghgx5iu8E8OIoBLTVm4O5NvJJ/ABq.Y9IyPIHu', 'admin@example.com');
 
 CREATE TABLE `images_post` (
   `id` int(11) NOT NULL,

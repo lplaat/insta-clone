@@ -11,6 +11,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = isset($_POST['username']) ? $_POST['username'] : '';
     $password = isset($_POST['password']) ? $_POST['password'] : '';
     $confirmPassword = isset($_POST['confirmPassword']) ? $_POST['confirmPassword'] : '';
+    $email = isset($_POST['email']) ? $_POST['email'] : '';
 
     if($password != $confirmPassword) {
         $status = 'passwordNotTheSame';
@@ -18,10 +19,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $status = 'passwordNotValid';
     } elseif(strlen($username) < 3 && strlen($username) > 12) {
         $status = 'usernameNotValid';
+    } elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $status = 'emailNotValid';
     } else {
         $user = New User();
         $user->name = htmlspecialchars($username);
         $user->password = $password;
+        $user->email = $email;
 
         $success = $user->create();
         if($success) {
@@ -48,7 +52,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <input class="input" name="username" type="text" placeholder="Your username">
                             </div>
                         </div>
-                        
+
+                        <div class="field">
+                            <label class="label">Email</label>
+                            <div class="control">
+                                <input class="input" name="email" type="email" placeholder="Your email">
+                            </div>
+                        </div>
+
                         <div class="field">
                             <label class="label">Password</label>
                             <div class="control">
@@ -71,6 +82,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="field">
                             <?php
                                 if($status == "accountCreated") echo '<p class="subtitle is-6 has-text-centered green-text">You\'re account is created!</p>';
+                                if($status == "emailNotValid") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re email is not valid!</p>';
                                 if($status == "passwordNotTheSame") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re passwords are not the same!</p>';
                                 if($status == "passwordNotValid") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re passwords needs to be longer than 8 characters and shorter then 18!</p>';
                                 if($status == "usernameNotValid") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re username needs to be longer than 3 characters and shorter then 12!</p>';

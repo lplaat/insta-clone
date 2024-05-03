@@ -1,11 +1,11 @@
 <div class="is-widescreen">
     <div class="columns">
         <aside class="menu is-fullheight">
-            <b class="title is-3">InstaClone</b>
+            <a href="/"><b class="title is-3">InstaClone</b></a>
             <div class="menu-list flex-container is-fullheight pt-5">
                 <div>
                     <a href="/">Home</a>
-                    <a href="/search">search</a>
+                    <a href="/search">Search</a>
                 </div>
 
                 <div style="flex:1;"></div>
@@ -18,4 +18,4 @@
                 </div>
             </div>
         </aside>
-        <div class="column content p-5">
+        <div class="column content p-5 main-screen">

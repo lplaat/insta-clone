@@ -7,9 +7,14 @@ class User {
     public $id;
     public $name;
     public $password;
+    public $email;
+    public $private;
+    public $following;
+    public $followers;
+    public $createdAt;
 
     function __construct($userId = null) {
-        # Sets user with the id given
+        # Sets user when the id given
         if($userId != null) {
             $this->getById($userId);
         }
@@ -28,6 +33,11 @@ class User {
         $this->id = $result[0]['id'];
         $this->name = $result[0]['username'];
         $this->password = $result[0]['password'];
+        $this->email = $result[0]['email'];
+        $this->private = $result[0]['private'];
+        $this->following = $result[0]['following'];
+        $this->followers = $result[0]['followers'];
+        $this->createdAt = $result[0]['created_at'];
 
         return true;
     }
@@ -53,10 +63,10 @@ class User {
             return false;
         }
 
-        $query = "INSERT INTO users (username, `password`) VALUES (?, ?)";
+        $query = "INSERT INTO users (`username`, `password`, `email`) VALUES (?, ?, ?)";
 
         $stmt = $GLOBALS['conn']->prepare($query);
-        $stmt->execute([$this->name, password_hash($this->password, PASSWORD_DEFAULT)]);
+        $stmt->execute([$this->name, password_hash($this->password, PASSWORD_DEFAULT), $this->email]);
 
         return true;
     }
@@ -78,32 +88,45 @@ class User {
         return $this;
     }
 
-    function isFollowedBy($userId) {
+    function isFollowedBy($user) {
         # Returns a boolean ifthe user is following this user
         $query = "SELECT * FROM users_follows WHERE follower_id = ? AND user_id = ?";
 
         $stmt = $GLOBALS['conn']->prepare($query);
-        $stmt->execute([$userId, $this->id]);
+        $stmt->execute([$user->id, $this->id]);
 
         $result = $stmt->fetchAll();
         return count($result) != 0;
     }
 
-    function userFollowedByStatus($userId, $status) {
+    function userFollowedByStatus($user, $status) {
         # Sets the following status for the user
-        $dbStatus = $this->isFollowedBy($userId);
+        $dbStatus = $this->isFollowedBy($user);
         if($dbStatus == $status) {
             return true;
         }
 
+        $increment = 0;
         if($status) {
             $query = "INSERT INTO users_follows (follower_id, user_id) VALUES (?, ?)";
+            $increment++;
         } else {
             $query = "DELETE FROM users_follows WHERE follower_id = ? AND user_id = ?";
+            $increment--;
         }
 
         $stmt = $GLOBALS['conn']->prepare($query);
-        $stmt->execute([$userId, $this->id]);
+        $stmt->execute([$user->id, $this->id]);
+
+        # Edited the following and followers amount on both the users accounts
+        $query = "UPDATE `users` SET `following` = `following` + ? WHERE `id` = ?;";
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$increment, $user->id]);
+
+        $query = "UPDATE `users` SET `followers` = `followers` + ? WHERE `id` = ?;";
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$increment, $this->id]);
+
         return true;
     }
 }

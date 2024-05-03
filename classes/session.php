@@ -1,5 +1,6 @@
 <?php
 require_once "classes/authentication.php";
+require_once "classes/feed.php";
 
 class Session {
 
@@ -9,6 +10,7 @@ class Session {
 
         # Inits the auth arrays inside the session
         Authentication::initSession();
+        Feed::initFeedSession();
     }
 
     public static function end() {

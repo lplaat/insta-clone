@@ -1,16 +1,16 @@
 <?php
 
 # Including classes
+require_once "classes/database.php";
 require_once "classes/session.php";
 require_once "classes/debug.php";
-require_once "classes/database.php";
 require_once "classes/authentication.php";
 
 # Start session, database and maybe error logging
+$GLOBALS['conn'] = Database::connect();
 Debug::enable();
 Session::start();
 Authentication::verify();
-$GLOBALS['conn'] = Database::connect();
 
 # Disable the header if needed
 if(!isset($jsonResponse)) {?>
