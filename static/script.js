@@ -64,4 +64,60 @@ function followUserButton(element, id){
     });
 }
 
+let token = '';
+let noMorePosts = false;
+let loadingPosts = false;
+async function loadPosts(){
+    // Check if were not already loading posts
+    if(loadingPosts) return;
+    loadingPosts = true;
+    
+    // Load in posts from the feed end-point
+    let response = await fetch("/feed?token=" + token, {
+        method: "GET",
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        }
+    });
+
+    let data = await response.json();
+    token = data['token'];
+
+    for(let i = 0; data['posts'].length > i; i++) {
+        // Load in each new post
+        holder[0].innerHTML += data['posts'][i];
+    }
+
+    if(data['posts'].length == 0) {
+        // Stop sending more feed request
+        noMorePosts = true;
+    }
+
+    // Set a timeout to enable loading posts again
+    setTimeout(() => {
+        loadingPosts = false;
+    }, 500);
+
+    // Activate all posts actions
+    initAllPosts();
+}
+
+// Check for a post holder if so load in posts
+let holder = document.getElementsByClassName('post-holder');
+if(holder.length != 0) {
+    loadPosts();
+
+    // Event listener to check to load more posts
+    window.addEventListener('scroll', function() {
+        let scrollPosition = window.scrollY || document.documentElement.scrollTop;
+        let totalHeight = document.documentElement.scrollHeight;
+        let windowHeight = window.innerHeight;
+  
+        if (scrollPosition + windowHeight >= totalHeight - 5000) {
+            loadPosts();
+        }
+    });
+}
+
+// Inits the post when there is one
 initAllPosts();

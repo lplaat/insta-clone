@@ -15,6 +15,13 @@ class Post {
     public $user;
     public $createdAt;
 
+    function __construct($postId = null) {
+        # Sets the post when the id given
+        if($postId != null) {
+            $this->getById($postId);
+        }
+    }
+
     private function getByAny($stmt, $values) {
         # Load the post by a stmt
         $stmt->execute($values);
@@ -45,8 +52,8 @@ class Post {
         $result = $stmt->fetchAll();
 
         # Checks ifthe session user is following
-        if(isset($_SESSION['userId'])) {
-            $this->following = $this->user->isFollowedBy($_SESSION['userId']);
+        if(isset($_SESSION['user'])) {
+            $this->following = $this->user->isFollowedBy($_SESSION['user']);
         } else {
             $this->following = null;
         }
@@ -107,20 +114,20 @@ class Post {
         $stmt->execute([$this->id]);
     }
 
-    function isLikedByUser($userId) {
+    function isLikedByUser($user) {
         # Returns a boolean if the post is liked by the user
         $query = "SELECT * FROM users_likes WHERE user_id = ? AND post_id = ?";
 
         $stmt = $GLOBALS['conn']->prepare($query);
-        $stmt->execute([$userId, $this->id]);
+        $stmt->execute([$user->id, $this->id]);
 
         $result = $stmt->fetchAll();
         return count($result) != 0;
     }
 
-    function userLiked($userId, $likedStatus) {
+    function userLiked($user, $likedStatus) {
         # Sets the like status for the user
-        $dbStatus = $this->isLikedByUser($userId);
+        $dbStatus = $this->isLikedByUser($user);
         if($dbStatus == $likedStatus) {
             return true;
         }
@@ -135,7 +142,7 @@ class Post {
         }
 
         $stmt = $GLOBALS['conn']->prepare($query);
-        $stmt->execute([$userId, $this->id]);
+        $stmt->execute([$user->id, $this->id]);
 
         # Edited the like amount on post
         $query = "UPDATE `posts` SET `liked_amount` = `liked_amount` + ? WHERE `id` = ?;";

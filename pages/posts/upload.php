@@ -12,8 +12,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
     $post = new Post();
     $post->text = htmlspecialchars($text, ENT_QUOTES);
 
-    $user = New User($_SESSION['userId']);
-    $post->user = $user;
+    $post->user = $_SESSION['user'];
     $post->upload();
 
     header('refresh: 1; url=/post/' . $post->shortId); 

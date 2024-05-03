@@ -2,9 +2,9 @@
 
 # Includes
 $jsonResponse = true;
-require 'includes/header.php';
-require 'classes/user.php';
-require 'classes/action.php';
+require_once 'includes/header.php';
+require_once 'classes/user.php';
+require_once 'classes/action.php';
 
 # Verifies user id
 $user = new User();
@@ -18,7 +18,7 @@ if($return == null) {
 # GET method returns liked status
 if($_SERVER['REQUEST_METHOD'] == 'GET') {
     Action::response(array(
-        'status' => $user->isFollowedBy($_SESSION['userId'])
+        'status' => $user->isFollowedBy($_SESSION['user'])
     ));
 }
 
@@ -33,14 +33,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     # Checks if the user is not following him self
-    if ($user->id == $_SESSION['userId']) {
+    if ($user->id == $_SESSION['user']->id) {
         Action::response(array(
             'error' => "Cant follow you're self!",
         ), 400);
     }
 
     # Save new following status
-    $user->userFollowedByStatus($_SESSION['userId'], $followingStatus);
+    $user->userFollowedByStatus($_SESSION['user'], $followingStatus);
     Action::response(array(
         'status' => $followingStatus
     ));

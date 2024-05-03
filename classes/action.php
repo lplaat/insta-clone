@@ -5,6 +5,7 @@ class Action {
 
     public static function response($data, $status = 200) {
         # Prints out the data and stops
+        echo json_encode($data);
         http_response_code($status);
         exit();
     }

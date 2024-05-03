@@ -30,6 +30,12 @@ if($path == '/signup') {
     exit();
 }
 
+# Feed action route
+if($path == '/feed') {
+    include 'actions/feed.php';
+    exit();
+}
+
 # For multiple part routes
 if(count($parts) < 2) {
     pageNotFound();

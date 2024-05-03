@@ -1,6 +1,7 @@
 <?php
 
 require_once "classes/session.php";
+require_once "classes/user.php";
 
 class Authentication {
 
@@ -27,6 +28,6 @@ class Authentication {
     public static function userLogins($user) {
         # Sets the session values when a user logins
         $_SESSION['loggedIn'] = true;
-        $_SESSION['userId'] = $user->id;
+        $_SESSION['user'] = new User($user->id);
     }
 }

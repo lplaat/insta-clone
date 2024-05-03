@@ -3,8 +3,8 @@
 # Includes
 $jsonResponse = true;
 require 'includes/header.php';
-require 'classes/post.php';
-require 'classes/action.php';
+require_once 'classes/post.php';
+require_once 'classes/action.php';
 
 # Verifies post id
 $post = new Post();
@@ -18,7 +18,7 @@ if($return == null) {
 # GET method returns liked status
 if($_SERVER['REQUEST_METHOD'] == 'GET') {
     Action::response(array(
-        'status' => $post->isLikedByUser($_SESSION['userId'])
+        'status' => $post->isLikedByUser($_SESSION['user'])
     ));
 }
 
@@ -32,7 +32,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         ), 400);
     }
 
-    $post->userLiked($_SESSION['userId'], $likedValue);
+    $post->userLiked($_SESSION['user'], $likedValue);
     Action::response(array(
         'status' => $likedValue
     ));
