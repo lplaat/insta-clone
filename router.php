@@ -41,6 +41,12 @@ if(count($parts) < 2) {
     pageNotFound();
 }
 
+# Notifications routes
+if($path == '/notifications') {
+    include 'pages/users/notifications.php';
+    exit();
+}
+
 # User routes
 if($parts[1] == 'user') {
     if(count($parts) >= 3 AND $parts[2] != '') {
@@ -86,14 +92,14 @@ if($parts[1] == 'post') {
 
 # Static routes
 if($path == '/static/styles.css') {
-    include 'static/styles.css';
     header("Content-Type: text/css");
+    include 'static/styles.css';
     exit();
 }
 
 if($path == '/static/script.js') {
+    header("Content-Type: text/javascript");
     include 'static/script.js';
-    header("Content-Type: application/javascript");
     exit();
 }
 

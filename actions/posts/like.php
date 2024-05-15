@@ -5,6 +5,7 @@ $jsonResponse = true;
 require 'includes/header.php';
 require_once 'classes/post.php';
 require_once 'classes/action.php';
+require_once 'classes/notifications.php';
 
 # Verifies post id
 $post = new Post();
@@ -32,6 +33,19 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         ), 400);
     }
 
+    # Creates notification
+    if ($likedValue) {
+        $notifications = new Notification();
+        $notifications->userId = $post->user->id;
+        $notifications->aboutUserId = $_SESSION['user']->id;
+        $notifications->aboutId = $post->id;
+        $notifications->type = 0;
+
+        if (!$notifications->checkAlreadyExists()) {
+            $notifications->create();
+        }       
+    }
+    
     $post->userLiked($_SESSION['user'], $likedValue);
     Action::response(array(
         'status' => $likedValue
