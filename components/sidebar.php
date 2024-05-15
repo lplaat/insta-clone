@@ -11,9 +11,9 @@
                 <div style="flex:1;"></div>
 
                 <div>
+                    <a href="/notifications"><b>Notifications</b></a>
                     <a href="#"><b>Profile</b></a>
                     <a href="/settings"><b>Settings</b></a>
-
                     <a href="/login?logout=true" class="is-fixed-bottom red-text"><b>Logout</b></a>
                 </div>
             </div>
