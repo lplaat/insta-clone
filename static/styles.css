@@ -57,3 +57,24 @@ body{
     position: absolute;
     right: 16px;
 }
+
+.top-8 {
+    top: 8px;
+}
+
+.bottom-8 {
+    bottom: 8px;
+}
+
+.min-full-width {
+    min-width: 100%;
+}
+
+.post-icon {
+    transform: translateY(7px);
+    margin-right: 8px;
+}
+
+.click-cursor {
+    cursor: pointer;
+}

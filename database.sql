@@ -3,7 +3,10 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` text NOT NULL,
   `password` text NOT NULL,
+  `real_name` text NOT NULL,
+  `biography` text NULL DEFAULT NULL,
   `email` text NOT NULL,
+  `avatar_path` text NULL DEFAULT NULL,
   `private` tinyint(1) NOT NULL DEFAULT 0,
   `following` int(11) NOT NULL DEFAULT 0,
   `followers` int(11) NOT NULL DEFAULT 0,
@@ -11,8 +14,8 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-INSERT INTO `users` (`id`, `username`, `password`, `email`) VALUES
-(1, 'admin', '$2y$10$vfZep2kwQIvsIYoghgx5iu8E8OIoBLTVm4O5NvJJ/ABq.Y9IyPIHu', 'admin@example.com');
+INSERT INTO `users` (`id`, `username`, `password`, `real_name`, `email`) VALUES
+(1, 'admin', '$2y$10$vfZep2kwQIvsIYoghgx5iu8E8OIoBLTVm4O5NvJJ/ABq.Y9IyPIHu', 'Administrator', 'admin@example.com');
 
 CREATE TABLE `images_post` (
   `id` int(11) NOT NULL,

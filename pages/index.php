@@ -7,7 +7,9 @@ require 'includes/header.php';
 <h1>Home</h1>
 
 <section class="section is-fullheight">
-    <div class="container is-fullheight post-holder"></div>
+    <div class="container is-fullheight post-holder">
+        <script class="feed-settings" type="application/json">{"type": "any"}</script>
+    </div>
 </section>
 
 <?php
