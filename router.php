@@ -47,6 +47,12 @@ if(count($parts) < 2) {
     pageNotFound();
 }
 
+# Notifications routes
+if($path == '/notifications') {
+    include 'pages/users/notifications.php';
+    exit();
+}
+
 # User routes
 if($parts[1] == 'user') {
     if(count($parts) >= 3 AND $parts[2] != '') {
