@@ -2,6 +2,7 @@
 
 require_once "classes/database.php";
 require_once "classes/post.php";
+require_once "classes/user.php";
 require_once "classes/tools.php";
 
 class Feed {
@@ -9,12 +10,16 @@ class Feed {
     private $showTrendingPosts;
     private $seenPostsIds;
     private $postsId;
+    private $postsType;
+    private $postsTypeValue;
 
-    function __construct($token = null) {
+    function __construct($postsType, $value) {
         # Sets user when the id given
         $this->seenPostsIds = array(-1);
         $this->token = Tools::generateRandomString(12);
-        
+        $this->postsType = $postsType;
+        $this->postsTypeValue = $value;
+
         # Set feed in session
         $_SESSION['feeds'][$this->token] = $this;
     }
@@ -75,10 +80,33 @@ class Feed {
         return $this->getPostsFromQuery($query);
     }
 
+    private function showUserPosts($max = 5, $userId) {
+        # Returns the most recent post from the selected user
+        $seenPosts = implode(',', $this->seenPostsIds);
+        $mainUserId = $_SESSION['user']->id;
+        $query = "
+            SELECT (posts.id)
+            FROM posts
+            JOIN users ON posts.user_id = users.id
+            WHERE users.id = $userId
+            AND posts.id NOT IN ($seenPosts)
+            ORDER BY posts.created_at DESC
+            LIMIT 10;
+        ";
+        return $this->getPostsFromQuery($query);
+    }
+
     function getPosts() {
-        # Get most recent post of people the user follows
-        $posts = $this->showFollowingPosts(10);
-        $posts = array_merge($posts, $this->showTrendingPosts(10 - count($posts)));
+        if($this->postsType == 'any') {
+            # Get most recent post of people the user follows
+            $posts = $this->showFollowingPosts(10);
+            $posts = array_merge($posts, $this->showTrendingPosts(10 - count($posts)));
+        }else if($this->postsType == 'user'){
+            # Get all the recent post of one user
+            $user = new User();
+            $user->getByName($this->postsTypeValue);
+            $posts = $this->showUserPosts(10, $user->id);
+        }
 
         # Turn post id to post components
         $postComponents = array();

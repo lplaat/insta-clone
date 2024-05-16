@@ -7,7 +7,10 @@ class User {
     public $id;
     public $name;
     public $password;
+    public $realName;
+    public $biography;
     public $email;
+    public $avatarPath;
     public $private;
     public $following;
     public $followers;
@@ -33,7 +36,10 @@ class User {
         $this->id = $result[0]['id'];
         $this->name = $result[0]['username'];
         $this->password = $result[0]['password'];
+        $this->realName = $result[0]['real_name'];
+        $this->biography = $result[0]['biography'];
         $this->email = $result[0]['email'];
+        $this->avatarPath = $result[0]['avatar_path'];
         $this->private = $result[0]['private'];
         $this->following = $result[0]['following'];
         $this->followers = $result[0]['followers'];
@@ -63,12 +69,25 @@ class User {
             return false;
         }
 
-        $query = "INSERT INTO users (`username`, `password`, `email`) VALUES (?, ?, ?)";
+        $query = "INSERT INTO users (`username`, `password`, `real_name`, `email`) VALUES (?, ?, ?, ?)";
 
         $stmt = $GLOBALS['conn']->prepare($query);
-        $stmt->execute([$this->name, password_hash($this->password, PASSWORD_DEFAULT), $this->email]);
+        $stmt->execute([$this->name, password_hash($this->password, PASSWORD_DEFAULT), $this->name, $this->email]);
 
         return true;
+    }
+
+    function update() {
+        # Update the user in the database with values from this object
+        $query = "UPDATE `users` SET 
+            `real_name` = ?, 
+            `email` = ?, 
+            `biography` = ?, 
+            `avatar_path` = ?, 
+            `private` = ? 
+            WHERE `id` = ?";
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$this->realName, $this->email, $this->biography, $this->avatarPath, $this->private, $this->id]);
     }
 
     function login($username, $rawPassword){
@@ -89,7 +108,7 @@ class User {
     }
 
     function isFollowedBy($user) {
-        # Returns a boolean ifthe user is following this user
+        # Returns a boolean if the user is following this user
         $query = "SELECT * FROM users_follows WHERE follower_id = ? AND user_id = ?";
 
         $stmt = $GLOBALS['conn']->prepare($query);

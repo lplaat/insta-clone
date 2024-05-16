@@ -15,11 +15,6 @@ function initAllPosts() {
         let likeButton = post['element'].getElementsByClassName('like-button')[0];
         let likeCounter = post['element'].getElementsByClassName('like-counter')[0];
         likeButton.onclick = () => {likePostButton(likeButton, id, likeCounter)};
-
-        if(!post['isCreator']) {
-            let followButton = post['element'].getElementsByClassName('follow-button')[0];
-            followButton.onclick = () => {followUserButton(followButton, id)};
-        }
     }
 }
 
@@ -45,35 +40,55 @@ function likePostButton(element, id, likeCounter){
     });
 }
 
-function followUserButton(element, id){
-    // Sets the new icon
-    posts[id]['isFollowed'] = !posts[id]['isFollowed'];
-    if(posts[id]['isFollowed']) {
-        element.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon is-medium" viewBox="0 0 448 512"><path fill="#FF0000" d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg>';
-    }else {
-        element.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon is-medium" viewBox="0 0 448 512"><path fill="#03BE03" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>';
+function followUserButton(id){
+    // Follows user action button
+    const followButton = document.getElementsByClassName('follow-button')[0];
+    const followCount = document.getElementsByClassName('follower-count')[0];
+
+    let followingStatus;
+    if(followButton.textContent == 'follow') {
+        followingStatus = true;
+        followButton.innerHTML = '<b>unfollow</b>';
+        followButton.className = followButton.className.replace('is-success', 'is-danger');
+    } else {
+        followingStatus = false;
+        followButton.innerHTML = '<b>follow</b>';
+        followButton.className = followButton.className.replace('is-danger', 'is-success');
     }
 
+    followCount.innerHTML = Number(followCount.textContent) - (followingStatus ? -1 : 1)
+
     // Sends the follow action to the server
-    fetch("/user/" + posts[id]['creatorName'] + '/follow', {
+    fetch("/user/" + id + '/follow', {
         method: "POST",
-        body: JSON.stringify({ following: posts[id]['isFollowed'] }),
+        body: JSON.stringify({ following:  followingStatus}),
         headers: {
             "Content-type": "application/json; charset=UTF-8"
         }
     });
 }
 
+function goTo(link) {
+    // Goes to that link
+    window.location.pathname = link;
+}
+
 let token = '';
 let noMorePosts = false;
 let loadingPosts = false;
-async function loadPosts(){
+async function loadPosts(settings){
     // Check if were not already loading posts
     if(loadingPosts) return;
     loadingPosts = true;
     
+    // Create feed url
+    let url = "/feed?token=" + token + "&type=" + settings['type'];
+    if(settings['type'] != 'any') {
+        url += '&data=' + settings['data'];
+    }
+
     // Load in posts from the feed end-point
-    let response = await fetch("/feed?token=" + token, {
+    let response = await fetch(url , {
         method: "GET",
         headers: {
             "Content-type": "application/json; charset=UTF-8"
@@ -105,7 +120,8 @@ async function loadPosts(){
 // Check for a post holder if so load in posts
 let holder = document.getElementsByClassName('post-holder');
 if(holder.length != 0) {
-    loadPosts();
+    let settings = JSON.parse(holder[0].getElementsByClassName('feed-settings')[0].textContent);
+    loadPosts(settings);
 
     // Event listener to check to load more posts
     window.addEventListener('scroll', function() {
