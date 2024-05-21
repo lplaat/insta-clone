@@ -51,6 +51,7 @@ body{
 
 .heart-icon {
     color: red;
+    cursor: pointer;
 }
 
 .right-side {

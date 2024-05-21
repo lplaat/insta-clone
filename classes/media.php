@@ -8,12 +8,12 @@ class Media {
     private $file;
 
     function __construct($file = null) {
-        // Just creates a image
+        # Just creates a image
         $this->file = $file;
     }
 
     function saveImage() {
-        // Save's the image and returns a status
+        # Save's the image and returns a status
         $imageFileType = strtolower(pathinfo($this->file['name'], PATHINFO_EXTENSION));
         $this->id = Tools::generateRandomString(12);
 

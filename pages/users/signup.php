@@ -17,7 +17,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $status = 'passwordNotTheSame';
     } elseif(strlen($password) < 8 && strlen($password) > 18) {
         $status = 'passwordNotValid';
-    } elseif(strlen($username) < 3 && strlen($username) > 12) {
+    } elseif(strlen($username) < 3 || strlen($username) > 12) {
         $status = 'usernameNotValid';
     } elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $status = 'emailNotValid';

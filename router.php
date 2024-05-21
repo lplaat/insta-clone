@@ -113,16 +113,16 @@ $mimeTypes = [
     ]
 ];
 
-// Check if the requested path starts with '/static/' or '/media/' and extract the directory and file extension
+# Check if the requested path starts with '/static/' or '/media/' and extract the directory and file extension
 if (preg_match('/^\/(static|media)\/(.+)\.(css|js|svg|jpg|jpeg|png|gif)$/', $path, $matches)) {
     $directory = $matches[1];
     $extension = $matches[3];
 
-    // Check if the directory is supported and the file extension is valid
+    # Check if the directory is supported and the file extension is valid
     if (isset($mimeTypes[$directory]) && array_key_exists($extension, $mimeTypes[$directory])) {
         $file = __DIR__ . "/{$directory}/{$matches[2]}.{$extension}";
         if (file_exists($file)) {
-            // Set the appropriate MIME type and output the file content
+            # Set the appropriate MIME type and output the file content
             header("Content-Type: {$mimeTypes[$directory][$extension]}");
             readfile($file);
             exit();
