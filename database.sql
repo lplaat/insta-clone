@@ -8,11 +8,11 @@ CREATE TABLE `users` (
   `email` text NOT NULL,
   `avatar_path` text NULL DEFAULT NULL,
   `private` tinyint(1) NOT NULL DEFAULT 0,
+  `theme` tinyint(4) NOT NULL DEFAULT 0,
   `following` int(11) NOT NULL DEFAULT 0,
   `followers` int(11) NOT NULL DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 
 INSERT INTO `users` (`id`, `username`, `password`, `real_name`, `email`) VALUES
 (1, 'admin', '$2y$10$vfZep2kwQIvsIYoghgx5iu8E8OIoBLTVm4O5NvJJ/ABq.Y9IyPIHu', 'Administrator', 'admin@example.com');

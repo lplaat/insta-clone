@@ -12,6 +12,7 @@ class User {
     public $email;
     public $avatarPath;
     public $private;
+    public $theme;
     public $following;
     public $followers;
     public $createdAt;
@@ -41,6 +42,7 @@ class User {
         $this->email = $result[0]['email'];
         $this->avatarPath = $result[0]['avatar_path'];
         $this->private = $result[0]['private'];
+        $this->theme = $result[0]['theme'];
         $this->following = $result[0]['following'];
         $this->followers = $result[0]['followers'];
         $this->createdAt = $result[0]['created_at'];
@@ -81,13 +83,15 @@ class User {
         # Update the user in the database with values from this object
         $query = "UPDATE `users` SET 
             `real_name` = ?, 
+            `password` = ?, 
             `email` = ?, 
             `biography` = ?, 
             `avatar_path` = ?, 
-            `private` = ? 
+            `private` = ?,
+            `theme` = ? 
             WHERE `id` = ?";
         $stmt = $GLOBALS['conn']->prepare($query);
-        $stmt->execute([$this->realName, $this->email, $this->biography, $this->avatarPath, $this->private, $this->id]);
+        $stmt->execute([$this->realName, $this->password, $this->email, $this->biography, $this->avatarPath, $this->private ? 1 : 0, $this->theme, $this->id]);
     }
 
     function login($username, $rawPassword){
