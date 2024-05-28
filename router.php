@@ -59,7 +59,7 @@ if($parts[1] == 'user') {
         # User specific actions and pages
         $GLOBALS['username'] = $parts[2];
 
-        if($parts[3] == 'follow'){
+        if(isset($parts[3]) && $parts[3] == 'follow'){
             # User follow action
             include 'actions/users/follow.php';
             exit();
@@ -80,13 +80,13 @@ if($parts[1] == 'post') {
         # Post upload page
         include 'pages/posts/upload.php';
         exit();
-    } 
+    }
 
     if(count($parts) >= 3 AND $parts[2] != '') {
         # Post specific actions and pages
         $GLOBALS['postShortId'] = $parts[2];
 
-        if($parts[3] == 'like'){
+        if(isset($parts[3]) && $parts[3] == 'like'){
             # Post like action
             include 'actions/posts/like.php';
             exit();
