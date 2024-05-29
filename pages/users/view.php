@@ -72,10 +72,18 @@ if($return == null) {
         </div>
     </div>
 </section>
+
 <section class="section is-fullheight">
-    <div class="container is-fullheight post-holder">
-        <script class="feed-settings" type="application/json">{"type": "user", "data": "<?php echo $user->name; ?>"}</script>
-    </div>
+    <?php if($user->viewingRights){ ?>
+            <div class="container is-fullheight post-holder">
+                <script class="feed-settings" type="application/json">{"type": "user", "data": "<?php echo $user->name; ?>"}</script>
+            </div>
+        </section>
+    <?php } else { ?>
+            <div class="container is-fullheight has-text-centered">
+                <h1>This profile is set to private!</h1>
+            </div>
+    <?php } ?>
 </section>
 
 <?php

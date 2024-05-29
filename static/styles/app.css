@@ -63,6 +63,10 @@ body{
     top: 8px;
 }
 
+.top-0 {
+    top: 0px;
+}
+
 .bottom-8 {
     bottom: 8px;
 }

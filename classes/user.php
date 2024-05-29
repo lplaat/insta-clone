@@ -12,6 +12,7 @@ class User {
     public $email;
     public $avatarPath;
     public $private;
+    public $viewingRights;
     public $theme;
     public $following;
     public $followers;
@@ -46,6 +47,16 @@ class User {
         $this->following = $result[0]['following'];
         $this->followers = $result[0]['followers'];
         $this->createdAt = $result[0]['created_at'];
+
+        # Check for viewing rights from
+        $this->viewingRights = true;
+        if(isset($_SESSION['user'])) {
+            if(!$this->isFollowedBy($_SESSION['user'])) {
+                if($this->private) {
+                    $this->viewingRights = false;
+                }
+            }
+        }
 
         return true;
     }

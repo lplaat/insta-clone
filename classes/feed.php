@@ -54,10 +54,19 @@ class Feed {
         # Returns the most recent trending posts
         $seenPosts = implode(',', $this->seenPostsIds);
         $query = "
-            SELECT (id) 
-            FROM posts WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) 
-            AND id NOT IN ($seenPosts) 
-            ORDER BY (liked_amount + comment_amount) DESC, created_at DESC 
+            SELECT p.id
+            FROM posts p
+            JOIN users u ON p.user_id = u.id
+            LEFT JOIN users_follows uf ON uf.user_id = p.user_id AND uf.follower_id = " . $_SESSION['user']->id . "
+            WHERE p.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+            AND p.id NOT IN ($seenPosts)
+            AND (
+                u.private = 0 OR 
+                uf.user_id IS NOT NULL
+            )
+            ORDER BY 
+            (p.liked_amount + p.comment_amount) DESC, 
+            p.created_at DESC
             LIMIT $max;
         ";
         return $this->getPostsFromQuery($query);
@@ -75,7 +84,7 @@ class Feed {
             AND posts.id NOT IN ($seenPosts)
             AND users_follows.follower_id = $mainUserId
             ORDER BY posts.created_at DESC
-            LIMIT 10;
+            LIMIT $max;
         ";
         return $this->getPostsFromQuery($query);
     }
@@ -83,7 +92,6 @@ class Feed {
     private function showUserPosts($max = 5, $userId) {
         # Returns the most recent post from the selected user
         $seenPosts = implode(',', $this->seenPostsIds);
-        $mainUserId = $_SESSION['user']->id;
         $query = "
             SELECT (posts.id)
             FROM posts
@@ -105,7 +113,11 @@ class Feed {
             # Get all the recent post of one user
             $user = new User();
             $user->getByName($this->postsTypeValue);
-            $posts = $this->showUserPosts(10, $user->id);
+            if($user->viewingRights){
+                $posts = $this->showUserPosts(10, $user->id);
+            } else {
+                $posts = array();
+            }
         }
 
         # Turn post id to post components
