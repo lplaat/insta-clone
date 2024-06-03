@@ -51,7 +51,7 @@ class User {
         # Check for viewing rights from
         $this->viewingRights = true;
         if(isset($_SESSION['user'])) {
-            if(!$this->isFollowedBy($_SESSION['user'])) {
+            if(!$this->isFollowedBy($_SESSION['user']) && $_SESSION['user']->id != $this->id) {
                 if($this->private) {
                     $this->viewingRights = false;
                 }
