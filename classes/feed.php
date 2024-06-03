@@ -62,7 +62,8 @@ class Feed {
             AND p.id NOT IN ($seenPosts)
             AND (
                 u.private = 0 OR 
-                uf.user_id IS NOT NULL
+                uf.user_id IS NOT NULL OR 
+                p.user_id = " . $_SESSION['user']->id . "
             )
             ORDER BY 
             (p.liked_amount + p.comment_amount) DESC, 
