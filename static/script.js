@@ -135,5 +135,25 @@ if(holder.length != 0) {
     });
 }
 
+function editProfile(){
+    // Sets the elements for editing the user profile
+    let innerValue = document.getElementsByClassName('user-biography')[0].innerText;
+    document.getElementsByClassName('user-biography')[0].innerHTML = "<textarea class=\"textarea has-fixed-size user-biography-input\" name=\"caption\" placeholder=\"Edit biography\">" + innerValue + "</textarea>";
+    document.getElementsByClassName('edit-profile-button')[0].style.display = "none";
+    document.getElementsByClassName('update-profile-button')[0].style.display = "block";
+}
+
+async function uploadProfileEdit(id) {
+    // Update profile with api call
+    await fetch("/user/" + id + '/edit', {
+        method: "POST",
+        body: JSON.stringify({ biography: document.getElementsByClassName('user-biography-input')[0].value }),
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        }
+    });
+    goTo(window.location.pathname);
+}
+
 // Inits the post when there is one
 initAllPosts();

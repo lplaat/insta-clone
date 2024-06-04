@@ -83,3 +83,12 @@ body{
 .click-cursor {
     cursor: pointer;
 }
+
+.max-sizes-image {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.display-none {
+    display: none;
+}

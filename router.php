@@ -63,6 +63,10 @@ if($parts[1] == 'user') {
             # User follow action
             include 'actions/users/follow.php';
             exit();
+        }else if(isset($parts[3]) && $parts[3] == 'edit'){
+            # User edit action
+            include 'actions/users/edit.php';
+            exit();
         }
 
         # User view profile page

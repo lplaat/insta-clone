@@ -21,9 +21,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Refresh: 1; url=/settings");
     }else if($_POST['method'] == 'userSettings') {
         # Changes the user properties
-        $realName = isset($_POST['displayName']) ? $_POST['displayName'] : '';
-        $email = isset($_POST['email']) ? $_POST['email'] : '';
-        $password = isset($_POST['password']) ? $_POST['password'] : '';
+        $realName = isset($_POST['displayName']) ? htmlspecialchars($_POST['displayName']) : '';
+        $email = isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '';
+        $password = isset($_POST['password']) ? htmlspecialchars($_POST['password']) : '';
         $private = isset($_POST['privacy']) ? $_POST['privacy'] : 'public';
         $theme = isset($_POST['theme']) ? $_POST['theme'] : 0;
 
