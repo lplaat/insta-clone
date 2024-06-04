@@ -21,13 +21,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Refresh: 1; url=/settings");
     }else if($_POST['method'] == 'userSettings') {
         # Changes the user properties
-        $realName = isset($_POST['displayName']) ? $_POST['displayName'] : '';
-        $email = isset($_POST['email']) ? $_POST['email'] : '';
-        $password = isset($_POST['password']) ? $_POST['password'] : '';
+        $realName = isset($_POST['displayName']) ? htmlspecialchars($_POST['displayName']) : '';
+        $email = isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '';
+        $password = isset($_POST['password']) ? htmlspecialchars($_POST['password']) : '';
         $private = isset($_POST['privacy']) ? $_POST['privacy'] : 'public';
         $theme = isset($_POST['theme']) ? $_POST['theme'] : 0;
 
-        if(strlen($realName) < 3 || strlen($realName) > 12) {
+        if(strlen($realName) < 3 || strlen($realName) > 24) {
             $status = 'realNameNotValid';
         } elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $status = 'emailNotValid';
@@ -51,8 +51,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $_SESSION['user']->update();
             $status = 'successfullySavedSettings';
+            header("Refresh: 1; url=/settings");
+        } else {
+            header("Refresh: 3; url=/settings");
         }
-        header("Refresh: 1; url=/settings");
     }
 }
 ?>

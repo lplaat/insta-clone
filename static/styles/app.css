@@ -63,6 +63,10 @@ body{
     top: 8px;
 }
 
+.top-0 {
+    top: 0px;
+}
+
 .bottom-8 {
     bottom: 8px;
 }
@@ -90,4 +94,13 @@ body{
     transform:translate(-2px, -10px) scale(.8);
     padding: 3px;
     color: white;
+}
+
+.max-sizes-image {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.display-none {
+    display: none;
 }
