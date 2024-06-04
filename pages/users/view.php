@@ -24,9 +24,9 @@ if($return == null) {
                                     <figure class="image is-48x48 mr-1">
                                         <?php
                                             if($user->avatarPath == null) {
-                                                echo '<img class="is-rounded" src="/static/images/avatar-default.svg" alt="Profile image">';
+                                                echo '<img class="is-rounded max-sizes-image" src="/static/images/avatar-default.svg" alt="Profile image">';
                                             } else {
-                                                echo '<img class="is-rounded" src="/media/' . $user->avatarPath . '" alt="Profile image">';
+                                                echo '<img class="is-rounded max-sizes-image" src="/media/' . $user->avatarPath . '" alt="Profile image">';
                                             }
                                         ?>
                                     </figure>
