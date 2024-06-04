@@ -88,3 +88,7 @@ body{
     height: 100% !important;
     width: 100% !important;
 }
+
+.display-none {
+    display: none;
+}

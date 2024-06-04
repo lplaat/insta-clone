@@ -41,15 +41,20 @@ if($return == null) {
                                             $isFollowing = $user->isFollowedBy($_SESSION['user']);
                                             if(!$isFollowing) echo '<button class="button follow-button is-success" onclick="followUserButton(\'' . $user->name . '\')"><b>follow</b></button>';
                                             if($isFollowing) echo '<button class="button follow-button is-danger" onclick="followUserButton(\'' . $user->name . '\')"><b>unfollow</b></button>';
+                                        }else {
+                                            echo '<button class="button follow-button edit-profile-button" onclick="editProfile()"><b>Edit Profile</b></button>';
+                                            echo '<button class="button follow-button is-success update-profile-button display-none" onclick="uploadProfileEdit(\'' . $user->name .'\')"><b>Update</b></button>';
                                         }
                                     ?>
                                 </div>
                             </div>
-                            <?php
-                                if($user->biography != null){
-                                    echo '<br><p>' . $user->biography . '</p>';
-                                }
-                            ?>
+                            <b class="user-biography">
+                                <?php
+                                    if($user->biography != null){
+                                        echo '<p>' . $user->biography . '</p>';
+                                    }
+                                ?>
+                            </b>
                             <br>
                             <nav class="level is-mobile has-text-centered">
                                 <div class="level-item has-text-centered">
