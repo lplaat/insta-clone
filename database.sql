@@ -46,12 +46,13 @@ CREATE TABLE `users_follows` (
 
 CREATE TABLE `notifications` (
   `id` int(11) NOT NULL,
+  `short_id` text NOT NULL,
   `type` tinyint(4) NOT NULL,
   `user_id` int(11) NOT NULL,
   `about_user_id` int(11) NOT NULL,
   `about_id` int(11) NOT NULL,
   `seen` tinyint(1) NOT NULL DEFAULT 0,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 ALTER TABLE `images_post`

@@ -51,7 +51,7 @@ class Post {
         $images = array();
         $result = $stmt->fetchAll();
 
-        # Checks ifthe session user is following
+        # Checks if the session user is following
         if(isset($_SESSION['user'])) {
             $this->following = $this->user->isFollowedBy($_SESSION['user']);
         } else {
