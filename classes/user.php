@@ -152,4 +152,13 @@ class User {
 
         return true;
     }
+
+    function howManyNotifications() {
+        # count unseen notifications
+        $qry = "SELECT count(*) FROM notifications WHERE user_id=? AND seen=?";
+        $stmt = $GLOBALS["conn"]->prepare($qry);
+        $stmt->execute([$this->id, 0]);
+        return $stmt->fetchColumn();
+    }
+
 }

@@ -4,6 +4,7 @@ require_once "classes/database.php";
 require_once "classes/post.php";
 require_once "classes/user.php";
 require_once "classes/tools.php";
+require_once "classes/notifications.php";
 
 class Feed {
     public $token;
@@ -96,6 +97,21 @@ class Feed {
         return $this->getPostsFromQuery($query);
     }
 
+    private function getNotifications() {
+        # gets recents notifications from user
+        $seenPosts = implode(',', $this->seenPostsIds);
+        $mainUserId = $_SESSION['user']->id;
+        $query = "
+            SELECT (notifications.id)
+            FROM notifications
+            WHERE notifications.id NOT IN ($seenPosts)
+            AND notifications.user_id = $mainUserId
+            ORDER BY notifications.created_at DESC
+            LIMIT 10;
+        ";
+        return $this->getPostsFromQuery($query);
+    }
+
     function getPosts() {
         if($this->postsType == 'any') {
             # Get most recent post of people the user follows
@@ -106,6 +122,9 @@ class Feed {
             $user = new User();
             $user->getByName($this->postsTypeValue);
             $posts = $this->showUserPosts(10, $user->id);
+        }else if($this->postsType == 'notification') {
+            # Get all the recent notification from the main user
+            $posts = $this->getNotifications();
         }
 
         # Turn post id to post components
@@ -113,8 +132,14 @@ class Feed {
         foreach($posts as $postId) {
             ob_start();
 
-            $post = new Post($postId);
-            include 'components/post.php';
+            if($this->postsType == 'notification') {
+                $notification = new Notification($postId);
+                $notification->setSeen($postId);
+                include "components/notification.php";
+            } else {
+                $post = new Post($postId);
+                include 'components/post.php';    
+            }
 
             $postComponent = ob_get_clean();
             array_push($postComponents, $postComponent);

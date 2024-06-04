@@ -4,7 +4,7 @@
 require 'includes/header.php';
 ?>
 
-<h1>Home</h1>
+<h1 class="mt-4">Home</h1>
 
 <section class="section is-fullheight">
     <div class="container is-fullheight post-holder">
