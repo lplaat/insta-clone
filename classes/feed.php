@@ -121,6 +121,20 @@ class Feed {
         return $this->getPostsFromQuery($query);
     }
 
+    private function getUsers() {
+        # gets users by search
+        $query = "
+            SELECT (users.id)
+            FROM users
+            WHERE
+            users.username LIKE '%$this->postsTypeValue%'
+            ORDER BY
+            users.followers DESC
+            LIMIT 10;
+        ";
+        return $this->getPostsFromQuery($query);
+    }
+
     function getPosts() {
         if($this->postsType == 'any') {
             # Get most recent post of people the user follows
@@ -139,6 +153,8 @@ class Feed {
         }else if($this->postsType == 'notification') {
             # Get all the recent notification from the main user
             $posts = $this->getNotifications();
+        } else if ($this->postsType == 'getUsers') {
+            $posts = $this->getUsers();
         }
 
         # Turn post id to post components
@@ -146,13 +162,16 @@ class Feed {
         foreach($posts as $postId) {
             ob_start();
 
-            if($this->postsType == 'notification') {
+            if ($this->postsType == 'notification') {
                 $notification = new Notification($postId);
                 $notification->setSeen($postId);
-                include "components/notification.php";
-            } else {
+                include "components/cards/notification.php";
+            } else if ($this->postsType == 'user') {
                 $post = new Post($postId);
                 include 'components/post.php';    
+            } else if ($this->postsType == 'getUsers') {
+                $user = new User($postId);
+                include "components/cards/user.php";
             }
 
             $postComponent = ob_get_clean();
