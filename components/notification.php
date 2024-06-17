@@ -14,7 +14,20 @@
                 </figure>
             </div>
             <div class="media-content">
-                <p class="title is-5"><a class="" href="user/<?php echo $notification->aboutUser->name?>"><?php echo $notification->aboutUser->name;?></a> has liked your post</p>
+                <p class="title is-5">
+                    <a class="" href="user/<?php echo $notification->aboutUser->name?>"><?php echo $notification->aboutUser->name;?></a>
+                    <?php
+                        if ($notification->type == 0) {
+                            echo "has liked your post";
+                        } else if ($notification->type == 1) {
+                            echo "is now following you";
+                        } else if ($notification->type == 2) {
+                            echo "has requested to follow you";
+                        } else if ($notification->type == 3) {
+                            echo "accepted your follow request";
+                        }
+                    ?>
+                </p>
                 <p class="subtitle is-6">
                     <span class="has-text-grey-light">
                         <b><?php echo Tools::humanReadableDate($notification->createdAt); ?></b>
@@ -22,7 +35,14 @@
                 </p>
             </div>
             <div class="ride-side top-8">
-                <a class="button" href="/post/<?php echo $notification->aboutPost->shortId?>">View post</a>
+                <?php
+                    if ($notification->type == 0) {
+                        echo "<a class=\"button\" href=/post/" . $notification->aboutPost->shortId . ">View post</a>";
+                    } else if ($notification->type == 2) {
+                        echo "<a class=\"button is-success\" onclick=\"acceptFollowButton(event, '" . $notification->aboutUser->name . "')\">Accept</a>";
+                        echo "<a class=\"button is-danger ml-1\" onclick=\"declineFollowButton(event, '". $notification->aboutUser->name ."')\">Decline</a>";
+                    }
+                ?>
             </div>
         </article>
     </div>

@@ -40,32 +40,85 @@ function likePostButton(element, id, likeCounter){
     });
 }
 
-function followUserButton(id){
+function followUserButton(id, isPrivate){
     // Follows user action button
     const followButton = document.getElementsByClassName('follow-button')[0];
     const followCount = document.getElementsByClassName('follower-count')[0];
 
     let followingStatus;
-    if(followButton.textContent == 'follow') {
-        followingStatus = true;
-        followButton.innerHTML = '<b>unfollow</b>';
-        followButton.className = followButton.className.replace('is-success', 'is-danger');
+    let requested;
+    if (!isPrivate) {
+        if(followButton.textContent == 'follow') {
+            followingStatus = true;
+            followButton.innerHTML = '<b>unfollow</b>';
+            followButton.className = followButton.className.replace('is-success', 'is-danger');
+        } else {
+            followingStatus = false;
+            followButton.innerHTML = '<b>follow</b>';
+            followButton.className = followButton.className.replace('is-danger', 'is-success');
+        }
+
+        followCount.innerHTML = Number(followCount.textContent) - (followingStatus ? -1 : 1);
+
+        // Sends the follow action to the server
+        fetch("/user/" + id + '/follow', {
+            method: "POST",
+            body: JSON.stringify({ following:  followingStatus}),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        });
     } else {
-        followingStatus = false;
-        followButton.innerHTML = '<b>follow</b>';
-        followButton.className = followButton.className.replace('is-danger', 'is-success');
+        if (followButton.textContent == 'follow') {
+            requested = true;
+            followButton.innerHTML = '<b>requested</b>';
+            followButton.className = followButton.className.replace('is-success', 'placeholder');
+        } else if (followButton.textContent == 'requested'){
+            requested = false;
+            followButton.innerHTML = '<b>follow</b>';
+            followButton.className = followButton.className.replace('placeholder', 'is-success');
+        } else if (followButton.textContent == "unfollow") {
+            followButton.innerHTML = '<b>follow</b>';
+            followButton.className = followButton.className.replace('is-danger', 'is-success');
+        }
+
+        // Sends the follow request to the server
+        fetch("/user/" + id + "/follow", {
+            method: "POST",
+            body: JSON.stringify({requested: requested}),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        });
     }
+}
 
-    followCount.innerHTML = Number(followCount.textContent) - (followingStatus ? -1 : 1)
-
-    // Sends the follow action to the server
-    fetch("/user/" + id + '/follow', {
+function acceptFollowButton(event, id) {
+    // Accept follow request
+    let accepted = true;
+    fetch("/user/" + id + "/follow", {
         method: "POST",
-        body: JSON.stringify({ following:  followingStatus}),
+        body: JSON.stringify({accepted: accepted}),
         headers: {
             "Content-type": "application/json; charset=UTF-8"
         }
     });
+
+    event['target'].offsetParent.remove();
+}
+
+function declineFollowButton(event, id) {
+    // decline follow request
+    let declined = true;
+    fetch("/user/" + id + "/follow", {
+        method: "POST",
+        body: JSON.stringify({declined: declined}),
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        }
+    });
+
+    event['target'].offsetParent.remove();
 }
 
 function goTo(link) {
