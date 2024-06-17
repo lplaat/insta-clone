@@ -58,12 +58,29 @@ class Notification {
         $stmt->execute([$this->userId, $this->shortId, $this->type, $this->aboutUserId, $this->aboutId]);
     }
 
-    function checkAlreadyExists() {
+    function checkAlreadyExistsLike() {
         # Checks if notifications exists
         $qry = "SELECT COUNT(*) FROM notifications WHERE `user_id` = ? AND `type` = ? AND `about_user_id` = ? AND `about_id` = ?";
 
         $stmt = $GLOBALS["conn"]->prepare($qry);
         $stmt->execute([$this->userId, $this->type, $this->aboutUserId, $this->aboutId]);
         return $stmt->fetchColumn() != 0;
+    }
+
+    function checkAlreadyExistsFollow() {
+        # Checks if notifications exists
+        $qry = "SELECT COUNT(*) FROM notifications WHERE `user_id` = ? AND `type` = ? AND `about_user_id` = ?";
+
+        $stmt = $GLOBALS["conn"]->prepare($qry);
+        $stmt->execute([$this->userId, $this->type, $this->aboutUserId]);
+        return $stmt->fetchColumn() != 0;
+    }
+
+    public static function deleteNotification($userId, $type, $aboutUserId) {
+        # delete notification from database
+        $qry = "DELETE FROM notifications WHERE `user_id` = ? AND `type` = ? AND `about_user_id` = ?";
+        
+        $stmt = $GLOBALS["conn"]->prepare($qry);
+        $stmt->execute([$userId, $type, $aboutUserId]);
     }
 }

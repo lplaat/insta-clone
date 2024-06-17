@@ -166,10 +166,19 @@ class User {
 
     function howManyNotifications() {
         # count unseen notifications
-        $qry = "SELECT count(*) FROM notifications WHERE user_id=? AND seen=?";
+        $qry = "SELECT count(*) FROM notifications WHERE user_id = ? AND seen = ?";
+        
         $stmt = $GLOBALS["conn"]->prepare($qry);
         $stmt->execute([$this->id, 0]);
         return $stmt->fetchColumn();
     }
 
+    function checkExistsFollowRequest($user) {
+        # count follow request
+        $qry = "SELECT count(*) FROM notifications WHERE user_id = ? AND about_user_id = ? AND `type` = ?;";
+        
+        $stmt = $GLOBALS["conn"]->prepare($qry);
+        $stmt->execute([$this->id, $user->id, 2]);
+        return $stmt->fetchColumn() != 0;
+    }
 }

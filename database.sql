@@ -50,7 +50,7 @@ CREATE TABLE `notifications` (
   `type` tinyint(4) NOT NULL,
   `user_id` int(11) NOT NULL,
   `about_user_id` int(11) NOT NULL,
-  `about_id` int(11) NOT NULL,
+  `about_id` int(11) NULL,
   `seen` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -41,7 +41,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $notifications->aboutId = $post->id;
         $notifications->type = 0;
 
-        if (!$notifications->checkAlreadyExists()) {
+        if (!$notifications->checkAlreadyExistsLike()) {
             $notifications->create();
         }       
     }
