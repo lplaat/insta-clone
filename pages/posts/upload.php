@@ -4,6 +4,7 @@
 require 'includes/header.php';
 require_once 'classes/user.php';
 require_once 'classes/post.php';
+require_once 'classes/media.php';
 
 $status = '';
 if($_SERVER['REQUEST_METHOD'] == "POST") {
@@ -15,7 +16,21 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
     $post->user = $_SESSION['user'];
     $post->upload();
 
-    header('refresh: 1; url=/post/' . $post->shortId); 
+    foreach ($_FILES["files"]["error"] as $key => $error) {
+        if ($error == UPLOAD_ERR_OK) {
+            $image = new Media(array(
+                'tmp_name' => $_FILES["files"]["tmp_name"][$key],
+                'name' => $_FILES["files"]["name"][$key],
+            ));
+
+            $status = $image->saveImage();
+            if($status) {
+                $post->linkImage($image);
+            }
+        }
+    }
+
+    // header('refresh: 1; url=/post/' . $post->shortId); 
 
     $status = 'success';
 }
@@ -26,25 +41,17 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
     <div class="container">
         <div class="box">
             <h1 class="title has-text-centered">Upload a Post</h1>
-            <div class="file is-centered is-boxed drop-area is-fullwidth" id="dropArea">
-                <label class="file-label">
-                    <input class="file-input" type="file" name="files[]" multiple id="fileInput">
-                    <span class="file-cta has-text-centered">
-                        <span class="file-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 512 512"><path fill="#5a5a5a" d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/></svg>
-                        </span>
-                        <span class="file-label">
-                            Drag and drop images here or click to select
-                        </span>
-                    </span>
-                </label>
-            </div>
-            <form method="post" enctype="multipart/form-data">
+
+            <form method="post" enctype="multipart/form-data" class="postUpload">
                 <div class="field">
-                    <label class="label">Description</label>
                     <div class="control">
-                        <textarea class="textarea has-fixed-size" name="caption" placeholder="Enter description"></textarea>
+                        <textarea class="textarea has-fixed-size" id="postCaption" name="caption" placeholder="Enter you're message"></textarea>
                     </div>
+                </div>
+
+                <input type="file" name="files[]" accept="image/*" multiple id="fileInputs" onchange="handleInputFileChange(event)" hidden>
+                <div class="columns mt-1">
+                    <div class="image-previews"></div>
                 </div>
 
                 <?php
@@ -58,6 +65,10 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
                     <div class="control">
                         <button class="button is-primary" type="submit">Submit</button>
                         <a href="/" class="button" type="submit">cancel</a>
+
+                        <div class="right-side top-0">
+                            <a class="button upload-image-button" onclick="openFileInputs()">Upload Image</a>
+                        </div>
                     </div>
                 </div>
             </form>

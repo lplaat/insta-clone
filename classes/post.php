@@ -51,19 +51,19 @@ class Post {
         $images = array();
         $result = $stmt->fetchAll();
 
-        # Checks if the session user is following
-        if(isset($_SESSION['user'])) {
-            $this->following = $this->user->isFollowedBy($_SESSION['user']);
-        } else {
-            $this->following = null;
-        }
-
         # Walk over each image from the post
         foreach($result as $image){
             array_push($images, array(
                 "id" => $image['id'],
                 "path" => $image['path']
             ));
+        }
+
+        # Checks if the session user is following
+        if(isset($_SESSION['user'])) {
+            $this->following = $this->user->isFollowedBy($_SESSION['user']);
+        } else {
+            $this->following = null;
         }
 
         $this->images = $images;
@@ -96,6 +96,8 @@ class Post {
 
         $stmt = $GLOBALS['conn']->prepare($query);
         $stmt->execute([$this->user->id, $this->text, $this->shortId]);
+
+        $this->id = $GLOBALS['conn']->lastInsertId();
     }
 
     function delete() {
@@ -150,5 +152,13 @@ class Post {
         $stmt->execute([$increment, $this->id]);
 
         return true;
+    }
+
+    function linkImage($media) {
+        # Link an media path to a post
+        $query = "INSERT INTO images_post (post_id, `path`) VALUES (?, ?)";
+
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$this->id, $media->path]);
     }
 }

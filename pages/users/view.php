@@ -39,9 +39,13 @@ if($return == null) {
                                     <?php
                                         if($_SESSION['user']->name != $user->name){
                                             $isFollowing = $user->isFollowedBy($_SESSION['user']);
-                                            if(!$isFollowing) echo '<button class="button follow-button is-success" onclick="followUserButton(\'' . $user->name . '\')"><b>follow</b></button>';
-                                            if($isFollowing) echo '<button class="button follow-button is-danger" onclick="followUserButton(\'' . $user->name . '\')"><b>unfollow</b></button>';
-                                        }else {
+                                            if($user->checkExistsFollowRequest($_SESSION['user'])) {
+                                                echo '<button class="button follow-button" onclick="followUserButton(\'' . $user->name . '\',' . boolval($user->private) . ')"><b>requested</b></button>';
+                                            } else if (!$isFollowing) {
+                                                echo '<button class="button follow-button is-success" onclick="followUserButton(\'' . $user->name . '\',' . boolval($user->private).  ')"><b>follow</b></button>';
+                                            }
+                                            if($isFollowing) echo '<button class="button follow-button is-danger" onclick="followUserButton(\'' . $user->name . '\',' . boolval($user->private) . ')"><b>unfollow</b></button>';
+                                        } else {
                                             echo '<button class="button follow-button edit-profile-button" onclick="editProfile()"><b>Edit Profile</b></button>';
                                             echo '<button class="button follow-button is-success update-profile-button display-none" onclick="uploadProfileEdit(\'' . $user->name .'\')"><b>Update</b></button>';
                                         }

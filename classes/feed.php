@@ -115,7 +115,9 @@ class Feed {
             FROM notifications
             WHERE notifications.id NOT IN ($seenPosts)
             AND notifications.user_id = $mainUserId
-            ORDER BY notifications.created_at DESC
+            ORDER BY 
+            notifications.type DESC,
+            notifications.created_at DESC
             LIMIT 10;
         ";
         return $this->getPostsFromQuery($query);

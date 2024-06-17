@@ -104,3 +104,21 @@ body{
 .display-none {
     display: none;
 }
+
+.image-previews {
+    display: flex;
+    flex-wrap: wrap;
+    width: 50%;
+    justify-content: space-between;
+    width: 50%;
+    margin: 0 auto;
+}
+
+.image-figure {
+    margin-bottom: 8px;
+}
+
+.image-figure img {
+    border-radius: 5px;
+    min-height: 100%;
+}

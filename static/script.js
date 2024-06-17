@@ -40,32 +40,85 @@ function likePostButton(element, id, likeCounter){
     });
 }
 
-function followUserButton(id){
+function followUserButton(id, isPrivate){
     // Follows user action button
     const followButton = document.getElementsByClassName('follow-button')[0];
     const followCount = document.getElementsByClassName('follower-count')[0];
 
     let followingStatus;
-    if(followButton.textContent == 'follow') {
-        followingStatus = true;
-        followButton.innerHTML = '<b>unfollow</b>';
-        followButton.className = followButton.className.replace('is-success', 'is-danger');
+    let requested;
+    if (!isPrivate) {
+        if(followButton.textContent == 'follow') {
+            followingStatus = true;
+            followButton.innerHTML = '<b>unfollow</b>';
+            followButton.className = followButton.className.replace('is-success', 'is-danger');
+        } else {
+            followingStatus = false;
+            followButton.innerHTML = '<b>follow</b>';
+            followButton.className = followButton.className.replace('is-danger', 'is-success');
+        }
+
+        followCount.innerHTML = Number(followCount.textContent) - (followingStatus ? -1 : 1);
+
+        // Sends the follow action to the server
+        fetch("/user/" + id + '/follow', {
+            method: "POST",
+            body: JSON.stringify({ following:  followingStatus}),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        });
     } else {
-        followingStatus = false;
-        followButton.innerHTML = '<b>follow</b>';
-        followButton.className = followButton.className.replace('is-danger', 'is-success');
+        if (followButton.textContent == 'follow') {
+            requested = true;
+            followButton.innerHTML = '<b>requested</b>';
+            followButton.className = followButton.className.replace('is-success', 'placeholder');
+        } else if (followButton.textContent == 'requested'){
+            requested = false;
+            followButton.innerHTML = '<b>follow</b>';
+            followButton.className = followButton.className.replace('placeholder', 'is-success');
+        } else if (followButton.textContent == "unfollow") {
+            followButton.innerHTML = '<b>follow</b>';
+            followButton.className = followButton.className.replace('is-danger', 'is-success');
+        }
+
+        // Sends the follow request to the server
+        fetch("/user/" + id + "/follow", {
+            method: "POST",
+            body: JSON.stringify({requested: requested}),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        });
     }
+}
 
-    followCount.innerHTML = Number(followCount.textContent) - (followingStatus ? -1 : 1)
-
-    // Sends the follow action to the server
-    fetch("/user/" + id + '/follow', {
+function acceptFollowButton(event, id) {
+    // Accept follow request
+    let accepted = true;
+    fetch("/user/" + id + "/follow", {
         method: "POST",
-        body: JSON.stringify({ following:  followingStatus}),
+        body: JSON.stringify({accepted: accepted}),
         headers: {
             "Content-type": "application/json; charset=UTF-8"
         }
     });
+
+    event['target'].offsetParent.remove();
+}
+
+function declineFollowButton(event, id) {
+    // decline follow request
+    let declined = true;
+    fetch("/user/" + id + "/follow", {
+        method: "POST",
+        body: JSON.stringify({declined: declined}),
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        }
+    });
+
+    event['target'].offsetParent.remove();
 }
 
 function goTo(link) {
@@ -130,7 +183,7 @@ if(holder.length != 0) {
         let windowHeight = window.innerHeight;
   
         if (scrollPosition + windowHeight >= totalHeight - 5000) {
-            loadPosts();
+            loadPosts(settings);
         }
     });
 }
@@ -154,6 +207,117 @@ async function uploadProfileEdit(id) {
     });
     goTo(window.location.pathname);
 }
+
+function openFileInputs(){
+    // Adds image to the post upload screen
+    if(imageCount < 4) {
+        document.getElementById('fileInputs').click();
+    }
+}
+
+let imageCount = 0;
+let images = {};
+function updateImageSpacing(){
+    // Update image spacing for image upload
+    const elements = document.getElementsByClassName('image-figure');
+
+    for(let i = 0; i < elements.length; i++){
+        let css;
+        if(imageCount == 1){
+            css = "width: 100%;";
+        }else {
+            css = "width: calc(50% - 8px);";
+        }
+
+        elements[i].style = css;
+    }
+}
+
+function removeImage(figure, container, index) {
+    // Removes images form upload screen
+    figure.remove();
+    imageCount -= 1;
+
+    if(imageCount == 0) {
+        container.classList = "image-previews";
+    }else if(imageCount < 4) {
+        document.getElementsByClassName('upload-image-button')[0].removeAttribute('disabled')
+    }
+
+    delete images[index];
+}
+
+function handleInputFileChange(event) {
+    // Displays images that are uploaded
+    let files = event.target.files;
+    const container = document.getElementsByClassName('image-previews')[0];
+    const uploadImageButton = document.getElementsByClassName('upload-image-button')[0];
+
+    for (const file of files) {
+        if(imageCount > 3) {
+            uploadImageButton.setAttribute('disabled', true);
+            return;
+        } else {
+            imageCount += 1;
+        }
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e, imageIndex) {
+                if(imageCount == 4) {
+                    uploadImageButton.setAttribute('disabled', true);
+                }
+
+                const img = document.createElement('img');
+                const figure = document.createElement('figure');
+                const button = document.createElement('a');
+                const id = String(Math.floor(Math.random() * 100000));
+
+                img.src = e.target.result;
+                figure.classList = "image image-figure";
+                button.classList = "button is-white right-side top-8";
+                button.innerHTML = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 384 512\" class=\"icon is-medium\"><path fill=\"#000000\" d=\"M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z\"/></svg>";
+
+                let css;
+                if(imageCount == 1){
+                    css = "width: 100%;";
+                    container.classList = "image-previews box";
+                }else {
+                    css = "width: calc(50% - 8px);";
+                }
+                figure.style = css;
+
+                button.onclick = () => {removeImage(figure, container, id)};
+                images[id] = file;
+                figure.appendChild(img);
+                figure.appendChild(button);
+                container.appendChild(figure);
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+    updateImageSpacing();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Make a event lisper for when someone wants to upload a post 
+    let formElements = document.getElementsByClassName('postUpload');
+    if(formElements.length == 0) return;
+    const form = formElements[0];
+
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const formData = new FormData();
+        formData.append('caption', document.getElementById('postCaption').value);
+        for(const id in images){
+            formData.append('files[]', images[id], images[id].name);            
+        }
+        
+        event.target.formData = formData;
+        event.target.submit();
+    });
+});
 
 // Inits the post when there is one
 initAllPosts();
