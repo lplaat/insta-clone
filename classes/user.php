@@ -16,6 +16,10 @@ class User {
     public $theme;
     public $following;
     public $followers;
+    public $likeNotifications;
+    public $commentNotifications;
+    public $followNotifications;
+    public $followRequests;
     public $createdAt;
 
     function __construct($userId = null) {
@@ -46,6 +50,10 @@ class User {
         $this->theme = $result[0]['theme'];
         $this->following = $result[0]['following'];
         $this->followers = $result[0]['followers'];
+        $this->likeNotifications = $result[0]['like_notifications'];
+        $this->commentNotifications = $result[0]['comment_notifications'];
+        $this->followNotifications = $result[0]['follow_notifications'];
+        $this->followRequests = $result[0]['follow_requests'];
         $this->createdAt = $result[0]['created_at'];
 
         # Check for viewing rights from
@@ -99,10 +107,14 @@ class User {
             `biography` = ?, 
             `avatar_path` = ?, 
             `private` = ?,
-            `theme` = ? 
+            `theme` = ?,
+            `like_notifications` = ?,
+            `comment_notifications` = ?,
+            `follow_notifications` = ?,
+            `follow_requests` = ?
             WHERE `id` = ?";
         $stmt = $GLOBALS['conn']->prepare($query);
-        $stmt->execute([$this->realName, $this->password, $this->email, $this->biography, $this->avatarPath, $this->private ? 1 : 0, $this->theme, $this->id]);
+        $stmt->execute([$this->realName, $this->password, $this->email, $this->biography, $this->avatarPath, $this->private ? 1 : 0, $this->theme, $this->likeNotifications ? 1 : 0, $this->commentNotifications ? 1 : 0, $this->followNotifications ? 1 : 0, $this->followRequests ? 1 : 0, $this->id]);
     }
 
     function login($username, $rawPassword){

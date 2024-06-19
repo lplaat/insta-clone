@@ -13,11 +13,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $confirmPassword = isset($_POST['confirmPassword']) ? $_POST['confirmPassword'] : '';
     $email = isset($_POST['email']) ? $_POST['email'] : '';
 
+    $passwordRegex = '/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,24}$/';
+    $usernameRegex = '/^[a-z]{3,12}$/';
+
     if($password != $confirmPassword) {
         $status = 'passwordNotTheSame';
-    } elseif(strlen($password) < 8 && strlen($password) > 18) {
+    } elseif(!preg_match($passwordRegex, $password)) {
         $status = 'passwordNotValid';
-    } elseif(strlen($username) < 3 || strlen($username) > 12) {
+    } elseif(!preg_match($usernameRegex, $username)) {
         $status = 'usernameNotValid';
     } elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $status = 'emailNotValid';
@@ -74,8 +77,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
 
                         <div class="field">
-                            <div class="control">
+                            <div class="control has-text-centered">
                                 <input class="button is-primary is-fullwidth" type="submit" value="Signup">
+                                <p class="mt-4">already have an account? login <a href="/login">here</a></p>
                             </div>
                         </div>
 
@@ -84,7 +88,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 if($status == "accountCreated") echo '<p class="subtitle is-6 has-text-centered green-text">You\'re account is created!</p>';
                                 if($status == "emailNotValid") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re email is not valid!</p>';
                                 if($status == "passwordNotTheSame") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re passwords are not the same!</p>';
-                                if($status == "passwordNotValid") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re passwords needs to be longer than 8 characters and shorter then 18!</p>';
+                                if($status == "passwordNotValid") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re passwords needs to be minimal 8 characters, atleast one uppercase, one lowercase, one digit and one special character</p>';
                                 if($status == "usernameNotValid") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re username needs to be longer than 3 characters and shorter then 12!</p>';
                                 if($status == "usernameTaken") echo '<p class="subtitle is-6 has-text-centered red-text">This username is already taken!</p>';
                             ?>
