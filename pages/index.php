@@ -7,7 +7,7 @@ require 'includes/header.php';
 <section class="section pb-0">
     <div class="container">
         <h1>Home</h1>
-        <div class="right-side top-0">
+        <div class="right-side right-zero top-0">
             <a href="/post/upload" class="button"><b>Create Post</b></a>
         </div>
     </div>
