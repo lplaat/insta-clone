@@ -158,7 +158,15 @@ async function loadPosts(settings){
 
     if(data['posts'].length == 0) {
         // Stop sending more feed request
-        noMorePosts = true;
+        if(!noMorePosts) {
+            if(settings['type'] == 'any' || settings['type'] == 'user'){
+                holder[0].innerHTML += "<h1 class=\"title feed-title is-1\">There are no more posts</h1>"
+            }else {
+                holder[0].innerHTML += "<h1 class=\"title feed-title is-1\">There are no more notification's</h1>"
+            }
+            noMorePosts = true;            
+        }
+
     }
 
     // Set a timeout to enable loading posts again

@@ -59,6 +59,10 @@ body{
     right: 16px;
 }
 
+.right-zero {
+    right: 0px !important;
+}
+
 .top-8 {
     top: 8px;
 }
@@ -121,4 +125,8 @@ body{
 .image-figure img {
     border-radius: 5px;
     min-height: 100%;
+}
+
+.feed-title {
+    text-align: center;
 }
