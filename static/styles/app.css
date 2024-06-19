@@ -59,6 +59,10 @@ body{
     right: 16px;
 }
 
+.right-zero {
+    right: 0px !important;
+}
+
 .top-8 {
     top: 8px;
 }
@@ -125,4 +129,8 @@ body{
 
 .pointer-events {
     pointer-events: all !important;
+}
+
+.feed-title {
+    text-align: center;
 }

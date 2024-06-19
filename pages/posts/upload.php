@@ -30,7 +30,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
         }
     }
 
-    // header('refresh: 1; url=/post/' . $post->shortId); 
+    header('refresh: 1; url=/post/' . $post->shortId); 
 
     $status = 'success';
 }
