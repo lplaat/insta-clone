@@ -8,18 +8,17 @@ require_once "classes/notifications.php";
 
 class Feed {
     public $token;
-    private $showTrendingPosts;
-    private $seenPostsIds;
-    private $postsId;
-    private $postsType;
-    private $postsTypeValue;
+    private $seenItemsIds;
+    private $itemsId;
+    private $itemsType;
+    private $itemsTypeValue;
 
-    function __construct($postsType, $value) {
+    function __construct($itemsType, $value) {
         # Sets user when the id given
-        $this->seenPostsIds = array(-1);
+        $this->seenItemsIds = array(-1);
         $this->token = Tools::generateRandomString(12);
-        $this->postsType = $postsType;
-        $this->postsTypeValue = $value;
+        $this->itemsType = $itemsType;
+        $this->itemsTypeValue = $value;
 
         # Set feed in session
         $_SESSION['feeds'][$this->token] = $this;
@@ -34,26 +33,26 @@ class Feed {
         return null;
     }
 
-    private function getPostsFromQuery($query) {
-        # Returns posts ids from a query
+    private function getItemsFromQuery($query) {
+        # Returns item ids from a query
         $stmt = $GLOBALS['conn']->prepare($query);
         $stmt->execute([]);
 
         $result = $stmt->fetchAll();
-        $postIds = array();
+        $itemIds = array();
         foreach($result as $row) {
-            array_push($postIds, $row['id']);
+            array_push($itemIds, $row['id']);
         }
 
-        # Added posts to the seen post list
-        $this->seenPostsIds = array_merge($this->seenPostsIds, $postIds);
+        # Added items to the seen item list
+        $this->seenItemsIds = array_merge($this->seenItemsIds, $itemIds);
 
-        return $postIds;
+        return $itemIds;
     }
 
     private function showTrendingPosts($max = 5) {
         # Returns the most recent trending posts
-        $seenPosts = implode(',', $this->seenPostsIds);
+        $seenPosts = implode(',', $this->seenItemsIds);
         $query = "
             SELECT p.id
             FROM posts p
@@ -71,12 +70,12 @@ class Feed {
             p.created_at DESC
             LIMIT $max;
         ";
-        return $this->getPostsFromQuery($query);
+        return $this->getItemsFromQuery($query);
     }
 
     private function showFollowingPosts($max = 5) {
         # Returns the most recent posts from the users the person is following
-        $seenPosts = implode(',', $this->seenPostsIds);
+        $seenPosts = implode(',', $this->seenItemsIds);
         $mainUserId = $_SESSION['user']->id;
         $query = "
             SELECT (posts.id)
@@ -88,12 +87,12 @@ class Feed {
             ORDER BY posts.created_at DESC
             LIMIT $max;
         ";
-        return $this->getPostsFromQuery($query);
+        return $this->getItemsFromQuery($query);
     }
 
     private function showUserPosts($max = 5, $userId) {
         # Returns the most recent post from the selected user
-        $seenPosts = implode(',', $this->seenPostsIds);
+        $seenPosts = implode(',', $this->seenItemsIds);
         $query = "
             SELECT (posts.id)
             FROM posts
@@ -103,84 +102,84 @@ class Feed {
             ORDER BY posts.created_at DESC
             LIMIT 10;
         ";
-        return $this->getPostsFromQuery($query);
+        return $this->getItemsFromQuery($query);
     }
 
     private function getNotifications() {
-        # gets recents notifications from user
-        $seenPosts = implode(',', $this->seenPostsIds);
+        # Gets recent notifications from user
+        $seenNotifications = implode(',', $this->seenItemsIds);
         $mainUserId = $_SESSION['user']->id;
         $query = "
             SELECT (notifications.id)
             FROM notifications
-            WHERE notifications.id NOT IN ($seenPosts)
+            WHERE notifications.id NOT IN ($seenNotifications)
             AND notifications.user_id = $mainUserId
             ORDER BY 
             notifications.type DESC,
             notifications.created_at DESC
             LIMIT 10;
         ";
-        return $this->getPostsFromQuery($query);
+        return $this->getItemsFromQuery($query);
     }
 
     private function getUsers() {
-        # gets users by search
+        # Gets users by search
         $query = "
             SELECT (users.id)
             FROM users
             WHERE
-            users.username LIKE '%$this->postsTypeValue%'
+            users.username LIKE '%$this->itemsTypeValue%'
             ORDER BY
             users.followers DESC
             LIMIT 10;
         ";
-        return $this->getPostsFromQuery($query);
+        return $this->getItemsFromQuery($query);
     }
 
-    function getPosts() {
-        if($this->postsType == 'any') {
+    function getItems() {
+        if($this->itemsType == 'any') {
             # Get most recent post of people the user follows
-            $posts = $this->showFollowingPosts(10);
-            $posts = array_merge($posts, $this->showTrendingPosts(10 - count($posts)));
-        }else if($this->postsType == 'user'){
+            $items = $this->showFollowingPosts(10);
+            $items = array_merge($items, $this->showTrendingPosts(10 - count($items)));
+        }else if($this->itemsType == 'user'){
             # Get all the recent post of one user
             $user = new User();
-            $user->getByName($this->postsTypeValue);
+            $user->getByName($this->itemsTypeValue);
          
             if($user->viewingRights){
-                $posts = $this->showUserPosts(10, $user->id);
+                $items = $this->showUserPosts(10, $user->id);
             } else {
-                $posts = array();
+                $items = array();
             }
-        }else if($this->postsType == 'notification') {
+        }else if($this->itemsType == 'notification') {
             # Get all the recent notification from the main user
-            $posts = $this->getNotifications();
-        } else if ($this->postsType == 'getUsers') {
-            $posts = $this->getUsers();
+            $items = $this->getNotifications();
+        } else if ($this->itemsType == 'getUsers') {
+            $items = $this->getUsers();
         }
 
-        # Turn post id to post components
-        $postComponents = array();
-        foreach($posts as $postId) {
+        # Turn item id's into components
+        $components = array();
+        foreach($items as $itemsId) {
             ob_start();
 
-            if ($this->postsType == 'notification') {
-                $notification = new Notification($postId);
-                $notification->setSeen($postId);
+            if ($this->itemsType == 'notification') {
+                $notification = new Notification($itemsId);
+                $notification->setSeen($itemsId);
                 include "components/cards/notification.php";
-            } else if ($this->postsType == 'user') {
-                $post = new Post($postId);
+            } else if ($this->itemsType == 'user' || $this->itemsType == 'any') {
+                $post = new Post($itemsId);
                 include 'components/post.php';    
-            } else if ($this->postsType == 'getUsers') {
-                $user = new User($postId);
+            } else if ($this->itemsType == 'getUsers') {
+                $user = new User($itemsId);
                 include "components/cards/user.php";
             }
 
-            $postComponent = ob_get_clean();
-            array_push($postComponents, $postComponent);
+            $itemComponents = ob_get_clean();
+            array_push($components, $itemComponents);
         }
 
-        return $postComponents;
+        return $components;
     }
 
     public static function initFeedSession() {
