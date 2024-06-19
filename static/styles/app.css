@@ -122,3 +122,7 @@ body{
     border-radius: 5px;
     min-height: 100%;
 }
+
+.pointer-events {
+    pointer-events: all !important;
+}

@@ -13,8 +13,12 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
 <section class="section is-fullheight">
     <form method="GET">
-        <input class="input" type="text" placeholder="Search for users" name="q">
-        <input class="button is-success" type="submit" value="search">
+        <div class="control has-icons-right mb-4">
+            <input class="input" type="text" placeholder="Search for users" name="q">
+            <button type="submit" class="button icon is-right pointer-events">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </div>
     </form>
     <div class="container is-fullheight post-holder">
         <script class="feed-settings" type="application/json">{"type": "getUsers", "data": "<?php echo $searchValue ?>"}</script>
