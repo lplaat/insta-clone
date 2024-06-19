@@ -1,5 +1,4 @@
 <div class="card post-item mb-5" id="<?php echo $notification->shortId ?>">
-    <script class="post-data" type="application/json"><?php echo json_encode($rawPostData); ?></script>
     <div class="box">
         <article class="media">
             <div class="media-left">

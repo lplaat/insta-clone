@@ -127,6 +127,10 @@ body{
     min-height: 100%;
 }
 
+.pointer-events {
+    pointer-events: all !important;
+}
+
 .feed-title {
     text-align: center;
 }

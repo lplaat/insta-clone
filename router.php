@@ -53,6 +53,12 @@ if($path == '/notifications') {
     exit();
 }
 
+# Search routes
+if ($path == '/search') {
+    include 'pages/search.php';
+    exit();
+}
+
 # User routes
 if($parts[1] == 'user') {
     if(count($parts) >= 3 AND $parts[2] != '') {
