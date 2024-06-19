@@ -34,6 +34,7 @@ if(!isset($jsonResponse)) {?>
         <script defer src="/static/script.js"></script>
         <script src="https://kit.fontawesome.com/9edfe70c0b.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+        <link rel="stylesheet" href="/static/styles/bulma-switch.min.css">
         <link rel="stylesheet" href="/static/styles/app.css">
         <title>InstaClone</title>
     </head>

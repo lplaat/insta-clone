@@ -11,6 +11,10 @@ CREATE TABLE `users` (
   `theme` tinyint(4) NOT NULL DEFAULT 0,
   `following` int(11) NOT NULL DEFAULT 0,
   `followers` int(11) NOT NULL DEFAULT 0,
+  `like_notifications` BOOLEAN NOT NULL DEFAULT TRUE,
+  `comment_notifications` BOOLEAN NOT NULL DEFAULT TRUE,
+  `follow_notifications` BOOLEAN NOT NULL DEFAULT TRUE,
+  `follow_requests` BOOLEAN NOT NULL DEFAULT TRUE,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
