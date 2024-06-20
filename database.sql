@@ -32,6 +32,7 @@ CREATE TABLE `posts` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `short_id` varchar(12) NOT NULL,
+  `head_id` int(11) NULL,
   `text` text NOT NULL,
   `liked_amount` int(11) NOT NULL DEFAULT 0,
   `comment_amount` int(11) NOT NULL DEFAULT 0,

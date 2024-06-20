@@ -7,6 +7,7 @@ require_once "classes/tools.php";
 class Post {
     public $id;
     public $shortId;
+    public $headId;
     public $text;
     public $likedAmount;
     public $commentAmount;
@@ -34,6 +35,7 @@ class Post {
         # Set public from post variables
         $this->id = $result[0]['id'];
         $this->shortId = $result[0]['short_id'];
+        $this->headId = $result[0]['head_id'];
         $this->text = $result[0]['text'];
         $this->likedAmount = $result[0]['liked_amount'];
         $this->commentAmount = $result[0]['comment_amount'];
@@ -92,10 +94,10 @@ class Post {
         $this->shortId = Tools::generateRandomString(12);
 
         # Commit to the database
-        $query = "INSERT INTO posts (user_id, `text`, short_id) VALUES (?, ?, ?)";
+        $query = "INSERT INTO posts (user_id, `text`, short_id, head_id) VALUES (?, ?, ?, ?)";
 
         $stmt = $GLOBALS['conn']->prepare($query);
-        $stmt->execute([$this->user->id, $this->text, $this->shortId]);
+        $stmt->execute([$this->user->id, $this->text, $this->shortId, $this->headId]);
 
         $this->id = $GLOBALS['conn']->lastInsertId();
     }
@@ -160,5 +162,12 @@ class Post {
 
         $stmt = $GLOBALS['conn']->prepare($query);
         $stmt->execute([$this->id, $media->path]);
+    }
+
+    function updateCommentCount($increment) {
+        # Update comment count
+        $query = "UPDATE `posts` SET `comment_amount` = `comment_amount` + ? WHERE `id` = ?;";
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$increment, $this->id]);
     }
 }

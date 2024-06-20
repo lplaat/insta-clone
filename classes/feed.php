@@ -60,6 +60,7 @@ class Feed {
             LEFT JOIN users_follows uf ON uf.user_id = p.user_id AND uf.follower_id = " . $_SESSION['user']->id . "
             WHERE p.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
             AND p.id NOT IN ($seenPosts)
+            AND p.head_id IS NULL
             AND (
                 u.private = 0 OR 
                 uf.user_id IS NOT NULL OR 
@@ -72,38 +73,40 @@ class Feed {
         ";
         return $this->getItemsFromQuery($query);
     }
-
+    
     private function showFollowingPosts($max = 5) {
         # Returns the most recent posts from the users the person is following
         $seenPosts = implode(',', $this->seenItemsIds);
         $mainUserId = $_SESSION['user']->id;
         $query = "
-            SELECT (posts.id)
+            SELECT posts.id
             FROM posts
             JOIN users_follows ON posts.user_id = users_follows.user_id
             WHERE posts.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
             AND posts.id NOT IN ($seenPosts)
+            AND posts.head_id IS NULL
             AND users_follows.follower_id = $mainUserId
             ORDER BY posts.created_at DESC
             LIMIT $max;
         ";
         return $this->getItemsFromQuery($query);
     }
-
+    
     private function showUserPosts($max = 5, $userId) {
         # Returns the most recent post from the selected user
         $seenPosts = implode(',', $this->seenItemsIds);
         $query = "
-            SELECT (posts.id)
+            SELECT posts.id
             FROM posts
             JOIN users ON posts.user_id = users.id
             WHERE users.id = $userId
             AND posts.id NOT IN ($seenPosts)
+            AND posts.head_id IS NULL
             ORDER BY posts.created_at DESC
             LIMIT 10;
         ";
         return $this->getItemsFromQuery($query);
-    }
+    }    
 
     private function getNotifications() {
         # Gets recent notifications from user
@@ -136,7 +139,26 @@ class Feed {
         return $this->getItemsFromQuery($query);
     }
 
+    private function getComments($max = 5, $headId) {
+        # Get comments by post
+        $reverseOrder = "";
+        $post = new Post($headId);
+        if($post->headId == null) $reverseOrder = 'DESC';
+
+        $seenPosts = implode(',', $this->seenItemsIds);
+        $query = "
+            SELECT posts.id
+            FROM posts
+            WHERE posts.id NOT IN ($seenPosts)
+            AND posts.head_id = $headId
+            ORDER BY posts.created_at $reverseOrder
+            LIMIT $max;
+        ";
+        return $this->getItemsFromQuery($query);
+    }
+
     function getItems() {
+        $items = array();
         if($this->itemsType == 'any') {
             # Get most recent post of people the user follows
             $items = $this->showFollowingPosts(10);
@@ -151,10 +173,17 @@ class Feed {
             } else {
                 $items = array();
             }
+        }else if($this->itemsType == 'comments') {
+            # Returns the list of comments
+            $post = new Post();
+            $post->getByShortId($this->itemsTypeValue);
+
+            $items = $this->getComments(10, $post->id);
         }else if($this->itemsType == 'notification') {
             # Get all the recent notification from the main user
             $items = $this->getNotifications();
         } else if ($this->itemsType == 'getUsers') {
+            # Get a list of all users
             $items = $this->getUsers();
         }
 
@@ -167,7 +196,7 @@ class Feed {
                 $notification = new Notification($itemsId);
                 $notification->setSeen($itemsId);
                 include "components/cards/notification.php";
-            } else if ($this->itemsType == 'user' || $this->itemsType == 'any') {
+            } else if ($this->itemsType == 'user' || $this->itemsType == 'any' || $this->itemsType == 'comments') {
                 $post = new Post($itemsId);
                 include 'components/post.php';    
             } else if ($this->itemsType == 'getUsers') {

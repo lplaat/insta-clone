@@ -1,16 +1,27 @@
 <?php
 
 require_once 'classes/tools.php';
+require_once 'classes/post.php';
 
 $rawPostData = array(
     "isLiked" => $post->isLikedByUser($_SESSION['user']),
     "isFollowed" => $post->following,
     "creatorName" => $post->user->name,
     "isCreator" => $post->user->id == $_SESSION["user"]->id
-)
+);
+
+$commentIndent = '';
+if($post->headId != null) {
+    $headPost = new Post($post->headId);
+    if($headPost->headId == null){
+        $commentIndent = 'comment-post';
+    } else {
+        $commentIndent = 'comment-comment-post';
+    }
+}
 ?>
 
-<div class="card post-item mb-5" id="<?php echo $post->shortId ?>">
+<div class="<?php echo $commentIndent ?> card post-item mb-5" id="<?php echo $post->shortId ?>">
     <script class="post-data" type="application/json"><?php echo json_encode($rawPostData); ?></script>
     <?php
         if(count($post->images) != 0) {

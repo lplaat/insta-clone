@@ -1,3 +1,12 @@
+<?php
+if ($notification->type == 0 || $notification->type == 4) {
+    if($notification->aboutPost->headId == null) {
+        $name = "post";
+    } else {
+        $name = "comment";
+    }
+}
+?>
 <div class="card post-item mb-5" id="<?php echo $notification->shortId ?>">
     <div class="box">
         <article class="media">
@@ -17,13 +26,15 @@
                     <a class="" href="user/<?php echo $notification->aboutUser->name?>"><?php echo $notification->aboutUser->name;?></a>
                     <?php
                         if ($notification->type == 0) {
-                            echo "has liked your post";
+                            echo "has liked your $name";
                         } else if ($notification->type == 1) {
                             echo "is now following you";
                         } else if ($notification->type == 2) {
                             echo "has requested to follow you";
                         } else if ($notification->type == 3) {
                             echo "accepted your follow request";
+                        } else if ($notification->type == 4) {
+                            echo "has commented on you're post";
                         }
                     ?>
                 </p>
@@ -35,8 +46,8 @@
             </div>
             <div class="ride-side top-8">
                 <?php
-                    if ($notification->type == 0) {
-                        echo "<a class=\"button\" href=/post/" . $notification->aboutPost->shortId . ">View post</a>";
+                    if ($notification->type == 0 || $notification->type == 4) {
+                        echo "<a class=\"button\" href=/post/" . $notification->aboutPost->shortId . ">View $name</a>";
                     } else if ($notification->type == 2) {
                         echo "<a class=\"button is-success\" onclick=\"acceptFollowButton(event, '" . $notification->aboutUser->name . "')\">Accept</a>";
                         echo "<a class=\"button is-danger ml-1\" onclick=\"declineFollowButton(event, '". $notification->aboutUser->name ."')\">Decline</a>";
