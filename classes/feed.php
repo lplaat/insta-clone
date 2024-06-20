@@ -127,11 +127,14 @@ class Feed {
 
     private function getUsers() {
         # Gets users by search
+        $seenUsers = implode(',', $this->seenItemsIds);
+
         $query = "
             SELECT (users.id)
             FROM users
             WHERE
-            users.username LIKE '%$this->itemsTypeValue%'
+            users.id NOT IN ($seenUsers)
+            AND users.username LIKE '%$this->itemsTypeValue%'
             ORDER BY
             users.followers DESC
             LIMIT 10;

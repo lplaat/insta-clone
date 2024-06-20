@@ -47,10 +47,10 @@ if($return == null) {
                                                 echo '<button class="button follow-button is-danger" onclick="followUserButton(\'' . $user->name . '\',' . boolval($user->private) . ')"><b>unfollow</b></button>';  
                                             } else if (!$user->followRequests) {
                                                 echo '<button class="button follow-button" disabled>cannot follow user<button>';
-                                            } else {
-                                                echo '<button class="button follow-button edit-profile-button" onclick="editProfile()"><b>Edit Profile</b></button>';
-                                                echo '<button class="button follow-button is-success update-profile-button display-none" onclick="uploadProfileEdit(\'' . $user->name .'\')"><b>Update</b></button>';
                                             }
+                                        }else {
+                                            echo '<button class="button follow-button edit-profile-button" onclick="editProfile()"><b>Edit Profile</b></button>';
+                                            echo '<button class="button follow-button is-success update-profile-button display-none" onclick="uploadProfileEdit(\'' . $user->name .'\')"><b>Update</b></button>';
                                         }
                                     ?>
                                 </div>
