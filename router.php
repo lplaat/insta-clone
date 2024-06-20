@@ -100,6 +100,10 @@ if($parts[1] == 'post') {
             # Post like action
             include 'actions/posts/like.php';
             exit();
+        }else if($parts[3] == 'comment'){
+            # Comment action
+            include 'actions/posts/comment.php';
+            exit();
         }
 
         # View post

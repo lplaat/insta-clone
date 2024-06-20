@@ -151,18 +151,22 @@ async function loadPosts(settings){
     let data = await response.json();
     token = data['token'];
 
-    for(let i = 0; data['posts'].length > i; i++) {
+    for(let i = 0; data['items'].length > i; i++) {
         // Load in each new post
-        holder[0].innerHTML += data['posts'][i];
+        holder[0].innerHTML += data['items'][i];
     }
 
-    if(data['posts'].length == 0) {
+    if(data['items'].length == 0) {
         // Stop sending more feed request
         if(!noMorePosts) {
-            if(settings['type'] == 'any' || settings['type'] == 'user'){
-                holder[0].innerHTML += "<h1 class=\"title feed-title is-1\">There are no more posts</h1>"
-            }else {
-                holder[0].innerHTML += "<h1 class=\"title feed-title is-1\">There are no more notification's</h1>"
+            if(settings['error'] != false) {
+                if(settings['type'] == 'any' || settings['type'] == 'user'){
+                    holder[0].innerHTML += "<h1 class=\"title feed-title is-1\">There are no more posts</h1>"
+                }else if(settings['type'] == 'comments'){
+                    holder[0].innerHTML += "<h1 class=\"title feed-title is-1\">There are no more comments</h1>"
+                }else {
+                    holder[0].innerHTML += "<h1 class=\"title feed-title is-1\">There are no more notification's</h1>"
+                }
             }
             noMorePosts = true;            
         }
@@ -270,7 +274,7 @@ function handleInputFileChange(event) {
         }
         if (file) {
             const reader = new FileReader();
-            reader.onload = function(e, imageIndex) {
+            reader.onload = function(e) {
                 if(imageCount == 4) {
                     uploadImageButton.setAttribute('disabled', true);
                 }
@@ -305,6 +309,18 @@ function handleInputFileChange(event) {
     }
 
     updateImageSpacing();
+}
+
+async function commentIt(event, postId) {
+    const textarea = event.target.previousElementSibling;
+    await fetch("/post/" + postId + '/comment', {
+        method: "POST",
+        body: JSON.stringify({ context: textarea.value }),
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        }
+    });
+    location.reload();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
