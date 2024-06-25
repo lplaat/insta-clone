@@ -257,6 +257,7 @@ function removeImage(figure, container, index) {
     }
 
     delete images[index];
+    updateImageSpacing();
 }
 
 function handleInputFileChange(event) {
@@ -337,9 +338,34 @@ document.addEventListener('DOMContentLoaded', () => {
         for(const id in images){
             formData.append('files[]', images[id], images[id].name);            
         }
-        
-        event.target.formData = formData;
-        event.target.submit();
+
+        console.log(formData);
+
+        fetch('/post/upload', {
+            method: 'POST',
+            body: formData
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            const refreshHeader = response.headers.get('refresh');
+            if (refreshHeader) {
+                const [delay, url] = refreshHeader.split('; url=');
+                const delayInSeconds = parseInt(delay.trim());
+    
+                setTimeout(() => {
+                    window.location.href = url;
+                }, delayInSeconds * 1000);
+            }
+
+            return response.text();
+        })
+        .then(html => {
+            if (html) {
+                document.body.innerHTML = html;
+            }
+        })
     });
 });
 

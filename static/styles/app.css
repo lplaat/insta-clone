@@ -153,3 +153,21 @@ body{
     min-width: 0 !important;
     width: calc(100% - 64px) !important;
 }
+
+.image-section {
+    width: 50%;
+}
+
+.carousel-image {
+    position: relative;
+    z-index: -1;
+}
+
+.post-item {
+    position: relative;
+    z-index: 7;
+}
+
+.body {
+    z-index: 8;
+}

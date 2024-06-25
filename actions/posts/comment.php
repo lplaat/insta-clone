@@ -52,7 +52,9 @@ $notification->type = 4;
 $notification->userId = $mainPost->user->id;
 $notification->aboutUserId = $_SESSION['user']->id;
 $notification->aboutId = $post->id;
-$notification->create();
+if(!$notification->checkAlreadyExists() && $mainPost->user->commentNotifications) {
+    $notification->create();
+}
 
 Action::response(array(
     'status' => 'Comment created',
