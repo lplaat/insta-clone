@@ -39,7 +39,7 @@ if(!isset($jsonResponse)) {?>
     </head>
     <body>
 
-    <?php 
+    <?php
     if(!isset($emptyMain)) {
         include "components/sidebar.php";
     }

@@ -311,6 +311,28 @@ function handleInputFileChange(event) {
     updateImageSpacing();
 }
 
+
+const sidebar = document.getElementsByClassName('sidebar')[0];
+const headContainer = document.getElementsByClassName('head-container')[0];
+
+function opensidebar() {
+    sidebar.style.display = 'block';
+    headContainer.style = "-webkit-filter: blur(8px); filter: blur(8px); pointer-events: none;";
+
+    document.body.style.overflow = "hidden";
+}
+
+function closesidebar() {
+    sidebar.style.display = 'none';
+    headContainer.style = "";
+    document.body.style.overflow = "show";
+}
+
+function goBack() {
+    window.location.pathname = "/"; 
+}
+  
+
 async function commentIt(event, postId) {
     const textarea = event.target.previousElementSibling;
     await fetch("/post/" + postId + '/comment', {
