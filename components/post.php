@@ -41,7 +41,7 @@ if($post->headId != null) {
     <div class="card-content">
         <div class="media mb-1">
             <div class="media-left">
-                <figure class="image is-48x48 mr-1 ml-0 click-cursor" onclick="goTo('user/<?php echo $post->user->name ?>')">
+                <figure class="image is-48x48 mr-1 ml-0 click-cursor profile-picture" onclick="goTo('user/<?php echo $post->user->name ?>')">
                     <?php
                         if($post->user->avatarPath == null) {
                             echo '<img class="is-rounded max-sizes-image" src="/static/images/avatar-default.svg" alt="Profile image">';

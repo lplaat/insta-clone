@@ -12,6 +12,7 @@ class Feed {
     private $itemsId;
     private $itemsType;
     private $itemsTypeValue;
+    public $lastUsed;
 
     function __construct($itemsType, $value) {
         # Sets user when the id given
@@ -19,6 +20,7 @@ class Feed {
         $this->token = Tools::generateRandomString(12);
         $this->itemsType = $itemsType;
         $this->itemsTypeValue = $value;
+        $this->lastUsed = time();
 
         # Set feed in session
         $_SESSION['feeds'][$this->token] = $this;
@@ -160,7 +162,20 @@ class Feed {
         return $this->getItemsFromQuery($query);
     }
 
+    private function removeOldFeed() {
+        # Remove old feeds that are inactive for 5 min
+        foreach ($_SESSION['feeds'] as $feed) {
+            if(time() - $feed->lastUsed > 300) {
+                unset($_SESSION['feeds'][$feed->token]);
+            }
+        }
+    }
+    
     function getItems() {
+        # update last used var and remove old feed in session
+        $this->lastUsed = time();
+        $this->removeOldFeed();
+
         $items = array();
         if($this->itemsType == 'any') {
             # Get most recent post of people the user follows
