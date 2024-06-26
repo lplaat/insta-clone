@@ -17,7 +17,7 @@
                 <p class="subtitle is-6">@<?php echo $user->name ?></p>
             </div>
             <div class="ride-side top-8">
-                
+                          
             </div>
         </article>
     </div>

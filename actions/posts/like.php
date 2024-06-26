@@ -34,7 +34,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     # Creates notification
-    if ($likedValue) {
+    if ($likedValue && !$post->isLocked) {
         $notifications = new Notification();
         $notifications->userId = $post->user->id;
         $notifications->aboutUserId = $_SESSION['user']->id;
@@ -46,7 +46,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         }       
     }
     
-    $post->userLiked($_SESSION['user'], $likedValue);
+    if (!$post->isLocked) {
+        $post->userLiked($_SESSION['user'], $likedValue);
+    }
     Action::response(array(
         'status' => $likedValue
     ));
