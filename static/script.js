@@ -129,6 +129,7 @@ function goTo(link) {
 let token = '';
 let noMorePosts = false;
 let loadingPosts = false;
+let loadedPosts = [];
 async function loadPosts(settings){
     // Check if were not already loading posts
     if(loadingPosts) return;
@@ -153,21 +154,28 @@ async function loadPosts(settings){
 
     for(let i = 0; data['items'].length > i; i++) {
         // Load in each new post
-        holder[0].innerHTML += data['items'][i];
+        let newElement = document.createElement('div');
+        newElement.innerHTML = data['items'][i];
+
+        holder[0].appendChild(newElement);
     }
 
     if(data['items'].length == 0) {
         // Stop sending more feed request
         if(!noMorePosts) {
             if(settings['error'] != false) {
+                let newElement = document.createElement('div');
+
                 if(settings['type'] == 'any' || settings['type'] == 'user'){
-                    holder[0].innerHTML += "<h1 class=\"title feed-title is-1\">There are no more posts</h1>"
+                    newElement.innerHTML += "<h1 class=\"title feed-title is-1\">There are no more posts</h1>"
                 }else if(settings['type'] == 'comments'){
-                    holder[0].innerHTML += "<h1 class=\"title feed-title is-1\">There are no more comments</h1>"
+                    newElement.innerHTML += "<h1 class=\"title feed-title is-1\">There are no more comments</h1>"
                 }else {
-                    holder[0].innerHTML += "<h1 class=\"title feed-title is-1\">There are no more notification's</h1>"
+                    newElement.innerHTML += "<h1 class=\"title feed-title is-1\">There are no more notification's</h1>"
                 }
+                holder[0].appendChild(newElement);
             }
+
             noMorePosts = true;            
         }
 
@@ -176,7 +184,19 @@ async function loadPosts(settings){
     // Set a timeout to enable loading posts again
     setTimeout(() => {
         loadingPosts = false;
-    }, 500);
+        const carousels = document.getElementsByClassName('carousel');
+        for(let i = 0; i < carousels.length; i++) {
+            if(!loadedPosts.includes(carousels[i].id)) {
+                bulmaCarousel.attach(`#${carousels[i].id}`, {
+                    slidesToScroll: 1,
+                    slidesToShow: 1,
+                    pagination: false,
+                    loop: true
+                });
+            }
+            loadedPosts.push(carousels[i].id);
+        }
+    }, 100);
 
     // Activate all posts actions
     initAllPosts();
