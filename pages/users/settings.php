@@ -72,6 +72,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['user']->update();
         $status = 'successfullySavedNotificationSettings';
         header("Refresh: 1; url=/settings");
+    } else if ($_POST['method'] == 'delete') {
+        $_SESSION['user']->isDeleted = true;
+        $_SESSION['user']->setDeleted();
+
+        header("location: /");
     }
 }
 ?>
@@ -217,7 +222,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <div class="box">
     <h2 class="has-text-centered">Delete Account</h2>
-    <button class="button is-danger is-fullwidth">Delete Account</button>
+    <form method="POST">
+        <button type="submit" name="method" class="button is-danger is-fullwidth" value="delete">Delete Account</button>
+    </form>
 </div>
 
 <?php
