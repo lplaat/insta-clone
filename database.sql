@@ -15,6 +15,9 @@ CREATE TABLE `users` (
   `comment_notifications` BOOLEAN NOT NULL DEFAULT TRUE,
   `follow_notifications` BOOLEAN NOT NULL DEFAULT TRUE,
   `follow_requests` BOOLEAN NOT NULL DEFAULT TRUE,
+  `is_admin` BOOLEAN NOT NULL DEFAULT FALSE,
+  `is_locked` BOOLEAN NOT NULL,
+  `is_deleted` BOOLEAN NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -32,10 +35,13 @@ CREATE TABLE `posts` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `short_id` varchar(12) NOT NULL,
-  `head_id` int(11) NULL,
+  `head_id` int(11) DEFAULT NULL,
   `text` text NOT NULL,
   `liked_amount` int(11) NOT NULL DEFAULT 0,
   `comment_amount` int(11) NOT NULL DEFAULT 0,
+  `is_pinned` tinyint(1) NOT NULL,
+  `is_locked` tinyint(1) NOT NULL,
+  `is_deleted` BOOLEAN NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

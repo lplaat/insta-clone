@@ -6,6 +6,10 @@ require_once 'classes/user.php';
 require_once 'classes/post.php';
 require_once 'classes/media.php';
 
+if ($_SESSION['user']->isLocked) {
+    header('location: /');
+}
+
 $status = '';
 if($_SERVER['REQUEST_METHOD'] == "POST") {
     $text = isset($_POST["caption"]) ? $_POST["caption"] : "";

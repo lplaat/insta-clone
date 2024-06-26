@@ -35,16 +35,36 @@ if($mainPost->headId != null) {
     }
 }
 
+# Detect if head post is locked
+if ($mainPost->isLocked && !$_SESSION['user']->isAdmin) {
+    Action::response(array(
+        'error' => 'This post is locked!'
+    ), 400);
+}
+
 # Creating comment
 $data = Action::requestData();
 $context = isset($data['context']) ? htmlspecialchars($data['context']) : '';
 
-$post = new Post();
-$post->headId = $mainPost->id;
-$post->user = $_SESSION['user'];
-$post->text = $context;
-$post->upload();
-$mainPost->updateCommentCount(1);
+if (!$mainPost->isLocked) {
+    $post = new Post();
+    $post->headId = $mainPost->id;
+    $post->user = $_SESSION['user'];
+    $post->text = $context;
+    $post->upload();
+    $mainPost->updateCommentCount(1);
+} else {
+    $post = new Post();
+    $post->headId = $mainPost->id;
+    $post->user = $_SESSION['user'];
+    $post->text = $context;
+    $post->isLocked = true;
+    $post->upload();
+    $mainPost->updateCommentCount(1);
+    $post->setLocked();
+}
+
+
 
 # Create notification
 $notification = new Notification();
@@ -53,6 +73,8 @@ $notification->userId = $mainPost->user->id;
 $notification->aboutUserId = $_SESSION['user']->id;
 $notification->aboutId = $post->id;
 $notification->create();
+
+
 
 Action::response(array(
     'status' => 'Comment created',

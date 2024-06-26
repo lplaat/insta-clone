@@ -154,6 +154,23 @@ body{
     width: calc(100% - 64px) !important;
 }
 
+.icon-transform {
+    transform: translate(0, 2px)
+}
+
+.lock-icon {
+    position: absolute;
+    transform: translate(-20px, -18px);
+}
+
+[data-theme=dark] .is-light-dark {
+    fill: #fff;
+}
+
+[data-theme=''] .is-light-dark {
+    fill: #fff;
+}
+  
 .head-container {
     width: 100%;
 }

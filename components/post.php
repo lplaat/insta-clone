@@ -24,7 +24,7 @@ if($post->headId != null) {
 <div class="<?php echo $commentIndent ?> card post-item mb-5" id="<?php echo $post->shortId ?>">
     <script class="post-data" type="application/json"><?php echo json_encode($rawPostData); ?></script>
     <?php
-        if(count($post->images) != 0) {
+        if(count($post->images) != 0 && !$post->isDeleted) {
             echo "
                 <div class=\"card-image\">
                     <figure class=\"image is-4by3\">
@@ -41,27 +41,62 @@ if($post->headId != null) {
     <div class="card-content">
         <div class="media mb-1">
             <div class="media-left">
-                <figure class="image is-48x48 mr-1 ml-0 click-cursor profile-picture" onclick="goTo('user/<?php echo $post->user->name ?>')">
+                <div class="lock-icon">
                     <?php
+                        if ($post->isLocked) {
+                            echo "<svg class=\"image is-16x16 is-light-dark\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><path d=\"M144 144v48H304V144c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192V144C80 64.5 144.5 0 224 0s144 64.5 144 144v48h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64H80z\"/></svg>";
+                        }
+                        if ($post->isDeleted && $_SESSION['user']->isAdmin) {
+                            echo "<svg class=\"image is-16x16 is-light-dark\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 384 512\"><path d=\"M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z\"/></svg>";
+                        }
+                    ?>  
+                </div>
+                    <?php
+                        if (!$post->user->isDeleted || $_SESSION['user']->isAdmin) {
+                            echo "<figure class=\"image is-48x48 mr-1 ml-0 click-cursor profile-picture\" onclick=\"goTo('user/" . $post->user->name . "')\">";
+                        } else {
+                            echo "<figure class=\"image is-48x48 mr-1 ml-0 profile-picture\">"; 
+                        }
                         if($post->user->avatarPath == null) {
                             echo '<img class="is-rounded max-sizes-image" src="/static/images/avatar-default.svg" alt="Profile image">';
-                        } else {
+                        } else if (!$post->isDeleted){
                             echo '<img class="is-rounded max-sizes-image" src="/media/' . $post->user->avatarPath . '" alt="Profile image">';
                         }
+                        echo '</figure>';
                     ?>
-                </figure>
             </div>
             <div class="media-content">
-                <p class="title is-4"><?php echo $post->user->realName ?></p>
-                <p class="subtitle is-6">@<?php echo $post->user->name ?></p>
+                <?php 
+                    if (!$post->user->isDeleted || $_SESSION['user']->isAdmin) {
+                        echo "<p class=\"title is-4\">" . $post->user->realName . "</p>";
+                        echo "<p class=\"subtitle is-6\">@" . $post->user->name . "</p>";
+                    } else {
+                        echo "<p class=\"title is-4\">Deleted user</p>";
+                        echo "<p class=\"subtitle is-6\">@deleted</p>";
+                    }
+                ?>
+                
                 <span class="right-side top-8">
                     <b><?php echo Tools::humanReadableDate($post->createdAt) ?></b>
+                    <?php
+                        if ($_SESSION['user']->isAdmin) {
+                            echo "<a class=\"icon \" href=\"/post/$post->shortId?adminSettings=true\">";
+                            echo "<svg class=\"image is-16x16 is-light-dark icon-transform\"xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 128 512\"><path d=\"M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z\"/></svg>";
+                            echo "</a>";
+                        }
+                    ?>
                 </span>
             </div>
         </div>
 
         <div class="content">
-            <?php echo $post->text ?>
+            <?php 
+            if ($post->isDeleted) {
+                echo "<h1>This post has been deleted</h1>";
+            } else {
+                echo $post->text;
+            }
+            ?>
             <div class="right-side bottom-8">
                 <span class="like-counter"><?php echo $post->likedAmount ?></span>
                 <?php

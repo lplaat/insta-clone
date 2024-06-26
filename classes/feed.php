@@ -63,6 +63,8 @@ class Feed {
             WHERE p.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
             AND p.id NOT IN ($seenPosts)
             AND p.head_id IS NULL
+            AND p.is_deleted = 0
+            AND u.is_deleted = 0
             AND (
                 u.private = 0 OR 
                 uf.user_id IS NOT NULL OR 
@@ -84,9 +86,12 @@ class Feed {
             SELECT posts.id
             FROM posts
             JOIN users_follows ON posts.user_id = users_follows.user_id
+            JOIN users ON posts.user_id = users.id
             WHERE posts.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
             AND posts.id NOT IN ($seenPosts)
             AND posts.head_id IS NULL
+            AND posts.is_deleted = 0
+            AND users.is_deleted = 0
             AND users_follows.follower_id = $mainUserId
             ORDER BY posts.created_at DESC
             LIMIT $max;
@@ -97,6 +102,12 @@ class Feed {
     private function showUserPosts($max = 5, $userId) {
         # Returns the most recent post from the selected user
         $seenPosts = implode(',', $this->seenItemsIds);
+
+        $space = '';
+        if (!$_SESSION['user']->isAdmin) {
+            $space = "AND posts.is_deleted = 0 AND users.is_deleted = 0";
+        }
+
         $query = "
             SELECT posts.id
             FROM posts
@@ -104,6 +115,7 @@ class Feed {
             WHERE users.id = $userId
             AND posts.id NOT IN ($seenPosts)
             AND posts.head_id IS NULL
+            $space
             ORDER BY posts.created_at DESC
             LIMIT 10;
         ";
@@ -131,16 +143,23 @@ class Feed {
         # Gets users by search
         $seenUsers = implode(',', $this->seenItemsIds);
 
+        $space = "";
+        if (!$_SESSION['user']->isAdmin) {
+            $space = "AND users.is_deleted = 0";
+        }
+
         $query = "
-            SELECT (users.id)
-            FROM users
-            WHERE
-            users.id NOT IN ($seenUsers)
-            AND users.username LIKE '%$this->itemsTypeValue%'
-            ORDER BY
-            users.followers DESC
-            LIMIT 10;
+        SELECT (users.id)
+        FROM users
+        WHERE
+        users.id NOT IN ($seenUsers)
+        AND users.username LIKE '%$this->itemsTypeValue%'
+        $space
+        ORDER BY
+        users.followers DESC
+        LIMIT 10;
         ";
+        
         return $this->getItemsFromQuery($query);
     }
 
@@ -154,8 +173,10 @@ class Feed {
         $query = "
             SELECT posts.id
             FROM posts
+            JOIN users ON posts.user_id = users.id
             WHERE posts.id NOT IN ($seenPosts)
             AND posts.head_id = $headId
+            AND users.is_deleted = 0
             ORDER BY posts.created_at $reverseOrder
             LIMIT $max;
         ";

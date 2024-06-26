@@ -14,6 +14,9 @@ class Post {
     public $following;
     public $images;
     public $user;
+    public $isPinned;
+    public $isLocked;
+    public $isDeleted;
     public $createdAt;
 
     function __construct($postId = null) {
@@ -39,6 +42,9 @@ class Post {
         $this->text = $result[0]['text'];
         $this->likedAmount = $result[0]['liked_amount'];
         $this->commentAmount = $result[0]['comment_amount'];
+        $this->isPinned = $result[0]['is_pinned'];
+        $this->isLocked = $result[0]['is_locked'];
+        $this->isDeleted = $result[0]['is_deleted'];
         $this->createdAt = $result[0]['created_at'];
 
         # Get the owner of the post
@@ -169,5 +175,19 @@ class Post {
         $query = "UPDATE `posts` SET `comment_amount` = `comment_amount` + ? WHERE `id` = ?;";
         $stmt = $GLOBALS['conn']->prepare($query);
         $stmt->execute([$increment, $this->id]);
+    }
+
+    function setLocked() {
+        # Update locked status
+        $query = "UPDATE `posts` SET `is_locked` = ? WHERE `id` = ? OR `head_id` = ? OR `head_id` IN (SELECT `id` FROM `posts` WHERE `id` = ? OR `head_id` = ?);";
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$this->isLocked, $this->id, $this->id, $this->id, $this->id]);
+    }
+
+    function setDeleted() {
+        # Update deleted status
+        $query = "UPDATE `posts` SET `is_deleted` = ? WHERE `id` = ?";
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$this->isDeleted, $this->id]);
     }
 }

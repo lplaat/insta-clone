@@ -20,6 +20,9 @@ class User {
     public $commentNotifications;
     public $followNotifications;
     public $followRequests;
+    public $isAdmin;
+    public $isLocked;
+    public $isDeleted;
     public $createdAt;
 
     function __construct($userId = null) {
@@ -55,6 +58,9 @@ class User {
         $this->followNotifications = $result[0]['follow_notifications'];
         $this->followRequests = $result[0]['follow_requests'];
         $this->createdAt = $result[0]['created_at'];
+        $this->isAdmin = $result[0]['is_admin'];
+        $this->isLocked = $result[0]['is_locked'];
+        $this->isDeleted = $result[0]['is_deleted'];
 
         # Check for viewing rights from
         $this->viewingRights = true;
@@ -121,6 +127,10 @@ class User {
         # Checks credentials and load in the user information
         $success = $this->getByName($username);
         if($success == null) {
+            return null;
+        }
+
+        if ($this->isDeleted) {
             return null;
         }
 
@@ -192,5 +202,21 @@ class User {
         $stmt = $GLOBALS["conn"]->prepare($qry);
         $stmt->execute([$this->id, $user->id, 2]);
         return $stmt->fetchColumn() != 0;
+    }
+
+    function setLocked() {
+        # update locked status
+        $query = "UPDATE users SET is_locked = ? WHERE id = ?";
+
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$this->isLocked, $this->id]);
+    }
+
+    function setDeleted() {
+        # update locked status
+        $query = "UPDATE users SET is_deleted = ? WHERE id = ?";
+
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$this->isDeleted, $this->id]);
     }
 }
