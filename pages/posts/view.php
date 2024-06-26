@@ -59,7 +59,7 @@ if ($deleted) {
 }
 
 # Validates if user is admin
-if (!$_SESSION['user']->isAdmin && $adminSettings) {
+if ((!$_SESSION['user']->isAdmin && $adminSettings) && $_SESSION['user']->name != $mainPost->user->name) {
     header("location: /");
 }
 
@@ -80,13 +80,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             <div>";
             if (!$mainPost->isDeleted) {
                 echo "<button type=\"submit\" name=\"deleted\"class=\"button is-danger mr-4\" value=\"true\">Delete post</button>";
-            } else {
+            } else if ($mainPost->isDeleted && $_SESSION['user']->isAdmin) {
                 echo "<button type=\"submit\" name=\"undeleted\"class=\"button is-danger mr-4\" value=\"true\">Undelete post</button>";
             } 
             
-            if (!$mainPost->isLocked) {
+            if (!$mainPost->isLocked && $_SESSION['user']->isAdmin) {
                 echo "<button type=\"submit\" name=\"locked\"class=\"button is-warning\" value=\"true\">Lock post</button>";
-            } else if (!$commentComment) {
+            } else if (!$commentComment && $_SESSION['user']->isAdmin) {
                 echo "<button type=\"submit\" name=\"unlockPost\" class=\"button is-warning\" value=\"true\">Unlock post</button>";
             }
             
