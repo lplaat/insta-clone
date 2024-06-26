@@ -46,6 +46,10 @@ body{
     border-left: 4px solid orange;
 }
 
+.card-content {
+    position: relative;
+}
+
 .heart-icon {
     color: red;
     cursor: pointer;
@@ -153,6 +157,33 @@ body{
     min-width: 0 !important;
     width: calc(100% - 64px) !important;
 }
+
+.image-section {
+    width: 50%;
+}
+
+.carousel {
+    position: relative;
+    width: 100%;
+    overflow: hidden; /* Ensure no overflow */
+}
+
+.carousel-item {
+    display: none; /* Hide all items by default */
+    width: 100%;
+    height: auto;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.carousel-item.active {
+    display: block; /* Show only the active item */
+}
+
 
 .icon-transform {
     transform: translate(0, 2px)

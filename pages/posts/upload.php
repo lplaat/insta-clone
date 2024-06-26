@@ -20,16 +20,18 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
     $post->user = $_SESSION['user'];
     $post->upload();
 
-    foreach ($_FILES["files"]["error"] as $key => $error) {
-        if ($error == UPLOAD_ERR_OK) {
-            $image = new Media(array(
-                'tmp_name' => $_FILES["files"]["tmp_name"][$key],
-                'name' => $_FILES["files"]["name"][$key],
-            ));
+    if(isset($_FILES["files"])){
+        foreach ($_FILES["files"]["error"] as $key => $error) {
+            if ($error == UPLOAD_ERR_OK) {
+                $image = new Media(array(
+                    'tmp_name' => $_FILES["files"]["tmp_name"][$key],
+                    'name' => $_FILES["files"]["name"][$key],
+                ));
 
-            $status = $image->saveImage();
-            if($status) {
-                $post->linkImage($image);
+                $status = $image->saveImage();
+                if($status) {
+                    $post->linkImage($image);
+                }
             }
         }
     }
