@@ -53,17 +53,17 @@ if($post->headId != null) {
                 </div>
                     <?php
                         if (!$post->user->isDeleted || $_SESSION['user']->isAdmin) {
-                            echo "<figure class=\"image is-48x48 mr-1 ml-0 click-cursor\" onclick=\"goTo('user/" . $post->user->name . "')\">";
+                            echo "<figure class=\"image is-48x48 mr-1 ml-0 click-cursor profile-picture\" onclick=\"goTo('user/" . $post->user->name . "')\">";
                         } else {
-                            echo "<figure class=\"image is-48x48 mr-1 ml-0\">"; 
+                            echo "<figure class=\"image is-48x48 mr-1 ml-0 profile-picture\">"; 
                         }
                         if($post->user->avatarPath == null) {
                             echo '<img class="is-rounded max-sizes-image" src="/static/images/avatar-default.svg" alt="Profile image">';
                         } else if (!$post->isDeleted){
                             echo '<img class="is-rounded max-sizes-image" src="/media/' . $post->user->avatarPath . '" alt="Profile image">';
                         }
+                        echo '</figure>';
                     ?>
-                </figure>
             </div>
             <div class="media-content">
                 <?php 
