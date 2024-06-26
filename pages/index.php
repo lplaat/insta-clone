@@ -8,7 +8,14 @@ require 'includes/header.php';
     <div class="container">
         <h1>Home</h1>
         <div class="right-side right-zero top-0">
-            <a href="/post/upload" class="button"><b>Create Post</b></a>
+            <?php
+                if ($_SESSION['user']->isLocked) {
+                    echo "<a class=\"button\" disabled><b>Create Post</b></a>";
+                } else {
+                    echo "<a href=\"/post/upload\" class=\"button\"><b>Create Post</b></a>";
+                }
+            
+            ?>
         </div>
     </div>
 </section>
