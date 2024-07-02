@@ -8,16 +8,22 @@ $status = '';
 if($_SERVER['REQUEST_METHOD'] == 'POST') { 
     if($_POST['method'] == 'changeAvatar') {
         # Changes the avatar and saves it
-        $avatar = new Media($_FILES["avatar"]);
-        $valid = $avatar->saveImage();
-        if(is_bool($valid) == true) {
-            $status = 'successfullySavedAvatar';
-        }else {
-            $status = $valid;
+        if($_FILES["avatar"]["tmp_name"] != "") {
+            $avatar = new Media($_FILES["avatar"]);
+            $valid = $avatar->saveImage();
+            if(is_bool($valid) == true) {
+                $status = 'successfullySavedAvatar';
+            }else {
+                $status = $valid;
+            }
+
+            $_SESSION['user']->avatarPath = $avatar->path;
+            $_SESSION['user']->update();
+        } else {
+            $status = 'noImageProvided';
+
         }
 
-        $_SESSION['user']->avatarPath = $avatar->path;
-        $_SESSION['user']->update();
         header("Refresh: 1; url=/settings");
     }else if($_POST['method'] == 'userSettings') {
         # Changes the user properties
@@ -145,6 +151,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php
             if($status != '') echo '<div class="field">';
             if($status == "successfullySavedAvatar") echo '<p class="subtitle is-6 has-text-centered green-text">You\'re avatar is saved successfully!</p>';
+            if($status == "noImageProvided") echo '<p class="subtitle is-6 has-text-centered red-text">No image was uploaded!</p>';
             if($status == "invalidFileFormat") echo '<p class="subtitle is-6 has-text-centered red-text">This is a invalid file!</p>';
             if($status == "invalidImageFormat") echo '<p class="subtitle is-6 has-text-centered red-text">This image format is not supported!</p>';
             if($status != '') echo '</div>';

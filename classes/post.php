@@ -161,4 +161,26 @@ class Post {
         $stmt = $GLOBALS['conn']->prepare($query);
         $stmt->execute([$this->id, $media->path]);
     }
+
+    function updateCommentCount($increment) {
+        # Update comment count
+        $query = "UPDATE `posts` SET `comment_amount` = `comment_amount` + ? WHERE `id` = ?;";
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$increment, $this->id]);
+    }
+
+    function setLocked() {
+        # Update locked status
+        $query = "UPDATE `posts` SET `is_locked` = ? WHERE `id` = ? OR `head_id` = ? OR `head_id` IN (SELECT `id` FROM `posts` WHERE `id` = ? OR `head_id` = ?);";
+        $stmt = $GLOBALS['conn']->prepare($query);
+        var_dump($this->isLocked);
+        $stmt->execute([$this->isLocked, $this->id, $this->id, $this->id, $this->id]);
+    }
+
+    function setDeleted() {
+        # Update deleted status
+        $query = "UPDATE `posts` SET `is_deleted` = ? WHERE `id` = ?";
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$this->isDeleted, $this->id]);
+    }
 }

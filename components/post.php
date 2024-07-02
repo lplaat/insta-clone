@@ -14,16 +14,19 @@ $rawPostData = array(
     <script class="post-data" type="application/json"><?php echo json_encode($rawPostData); ?></script>
     <?php
         if(count($post->images) != 0) {
-            echo "
-                <div class=\"card-image\">
-                    <figure class=\"image is-4by3\">
-                    <img
-                        src=\"https://bulma.io/assets/images/placeholders/1280x960.png\"
-                        alt=\"Placeholder image\"
-                    />
-                    </figure>
-                </div>
-            ";
+            echo '<div class="card-image">';
+
+            if(count($post->images) == 1) {
+                echo '<figure class="image is-fullwitdh image is-1by1"><img src="/media/' . $post->images[0]['path'] . '"></figure>';
+            }else {
+                $pictureHtml = '';
+                $i = 0;
+                foreach($post->images as $image) {
+                    $pictureHtml .= '<div class="item-' . strval($i) . '"><figure class="image is-fullwitdh image is-1by1"><img src="/media/' . $image['path'] . '" alt="Main picture" class="post-image"></div></figure>';
+                    $i += 1;
+                }
+                echo '<div id="carousel-' . Tools::generateRandomString(12) . '" class="carousel">' . $pictureHtml . '</div>';
+            }
         }
     ?>
 

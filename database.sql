@@ -11,11 +11,21 @@ CREATE TABLE `users` (
   `theme` tinyint(4) NOT NULL DEFAULT 0,
   `following` int(11) NOT NULL DEFAULT 0,
   `followers` int(11) NOT NULL DEFAULT 0,
+<<<<<<< Updated upstream
+=======
+  `like_notifications` BOOLEAN NOT NULL DEFAULT TRUE,
+  `comment_notifications` BOOLEAN NOT NULL DEFAULT TRUE,
+  `follow_notifications` BOOLEAN NOT NULL DEFAULT TRUE,
+  `follow_requests` BOOLEAN NOT NULL DEFAULT TRUE,
+  `is_admin` BOOLEAN NOT NULL DEFAULT 0,
+  `is_locked` BOOLEAN NOT NULL,
+  `is_deleted` BOOLEAN NOT NULL,
+>>>>>>> Stashed changes
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `users` (`id`, `username`, `password`, `real_name`, `email`) VALUES
-(1, 'admin', '$2y$10$vfZep2kwQIvsIYoghgx5iu8E8OIoBLTVm4O5NvJJ/ABq.Y9IyPIHu', 'Administrator', 'admin@example.com');
+INSERT INTO `users` (`id`, `username`, `password`, `real_name`, `email`, `is_admin`) VALUES
+(1, 'admin', '$2y$10$vfZep2kwQIvsIYoghgx5iu8E8OIoBLTVm4O5NvJJ/ABq.Y9IyPIHu', 'Administrator', 'admin@example.com', 1);
 
 CREATE TABLE `images_post` (
   `id` int(11) NOT NULL,
