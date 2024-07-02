@@ -225,7 +225,7 @@ function editProfile(){
     let innerValue = document.getElementsByClassName('user-biography')[0].innerText;
     document.getElementsByClassName('user-biography')[0].innerHTML = "<textarea class=\"textarea has-fixed-size user-biography-input\" name=\"caption\" placeholder=\"Edit biography\">" + innerValue + "</textarea>";
     document.getElementsByClassName('edit-profile-button')[0].style.display = "none";
-    document.getElementsByClassName('update-profile-button')[0].style.display = "block";
+    document.getElementsByClassName('update-profile-button')[0].style.display = "inline";
 }
 
 async function uploadProfileEdit(id) {
