@@ -22,6 +22,9 @@ $locked = isset($_POST['locked']) ? $_POST['locked'] : false;
 $unlocked = isset($_POST['unlocked']) ? $_POST['unlocked']  : false;
 $deleted = isset($_POST['deleted']) ? $_POST['deleted'] : false;
 $undeleted = isset($_POST['undeleted']) ? $_POST['undeleted'] : false;
+$blocked = isset($_POST['blocked']) ? $_POST['blocked'] : false;
+$unblocked = isset($_POST['unblocked']) ? $_POST['unblocked'] : false;
+
 
 if ($locked) {
     $user->isLocked = true;
@@ -35,12 +38,22 @@ if ($locked) {
 } else if ($undeleted) {
     $user->isDeleted = false;
     $user->setDeleted();
+} else if ($blocked) {
+    $blockedStatus = true;
+    $user->setBlocked($blockedStatus);
+} else if ($unblocked) {
+    $blockedStatus = false;
+    $user->setBlocked($blockedStatus);
+}
+
+# Validates if user is admin
+if ((!$_SESSION['user']->isAdmin && $adminSettings) && $_SESSION['user']->name == $user->name) {
+    header("location: /");
 }
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     header("location: /user/$user->name");
 }
-
 ?>
 
 <section class="section pb-0 mobile-visible">
@@ -52,15 +65,20 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         if ($adminSettings) {
             echo "<form method=\"POST\" class=\"has-text-centered\">
             <div>";
-            if (!$user->isDeleted) {
+            if (!$user->isDeleted && $_SESSION['user']->isAdmin) {
                 echo "<button type=\"submit\" name=\"deleted\"class=\"button is-danger mr-4\" value=\"true\">Delete user</button>";
-            } else {
+            } else if ($user->isDeleted && $_SESSION['user']->isAdmin) {
                 echo "<button type=\"submit\" name=\"undeleted\"class=\"button is-danger mr-4\" value=\"true\">Undelete user</button>";
             }
-            if (!$user->isLocked) {
-                echo "<button type=\"submit\" name=\"locked\"class=\"button is-warning\" value=\"true\">Lock user</button>";
+            if (!$user->isLocked && $_SESSION['user']->isAdmin) {
+                echo "<button type=\"submit\" name=\"locked\"class=\"button is-warning mr-4\" value=\"true\">Lock user</button>";
+            } else if ($user->isLocked && $_SESSION['user']->isAdmin) {
+                echo "<button type=\"submit\" name=\"unlocked\" class=\"button is-warning mr-4\" value=\"true\">Unlock user</button>";
+            }
+            if (!$user->checkBlocked($_SESSION['user'])) {
+                echo "<button type=\"submit\" name=\"blocked\"class=\"button is-danger\" value=\"true\">Block user</button>";
             } else {
-                echo "<button type=\"submit\" name=\"unlocked\" class=\"button is-warning\" value=\"true\">Unlock user</button>";
+                echo "<button type=\"submit\" name=\"unblocked\"class=\"button is-danger\" value=\"true\">Unblock user</button>";
             }
             
             echo "</div>

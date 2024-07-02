@@ -56,6 +56,12 @@ CREATE TABLE `users_follows` (
   `user_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE `users_blocked` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `blocked_user_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE `notifications` (
   `id` int(11) NOT NULL,
   `short_id` text NOT NULL,
