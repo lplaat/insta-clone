@@ -39,10 +39,10 @@ if($post->headId != null) {
                 }
                 echo '<div id="carousel-' . Tools::generateRandomString(12) . '" class="carousel">' . $pictureHtml . '</div>';
             }
-        }
 
-        echo '</div>';
-    } ?>
+            echo '</div>';
+        }
+    ?>
 
     <div class="card-content">
         <div class="media mb-1">
