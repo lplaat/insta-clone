@@ -60,11 +60,13 @@ class Feed {
             FROM posts p
             JOIN users u ON p.user_id = u.id
             LEFT JOIN users_follows uf ON uf.user_id = p.user_id AND uf.follower_id = " . $_SESSION['user']->id . "
+            LEFT JOIN users_blocked ub ON ub.blocked_user_id = " . $_SESSION['user']->id . " AND ub.user_id = p.user_id
             WHERE p.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
             AND p.id NOT IN ($seenPosts)
             AND p.head_id IS NULL
             AND p.is_deleted = 0
             AND u.is_deleted = 0
+            AND ub.user_id IS NULL
             AND (
                 u.private = 0 OR 
                 uf.user_id IS NOT NULL OR 
@@ -87,11 +89,13 @@ class Feed {
             FROM posts
             JOIN users_follows ON posts.user_id = users_follows.user_id
             JOIN users ON posts.user_id = users.id
+            LEFT JOIN users_blocked ub ON ub.blocked_user_id = " . $_SESSION['user']->id . " AND ub.user_id = posts.user_id
             WHERE posts.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
             AND posts.id NOT IN ($seenPosts)
             AND posts.head_id IS NULL
             AND posts.is_deleted = 0
             AND users.is_deleted = 0
+            AND ub.user_id IS NULL
             AND users_follows.follower_id = $mainUserId
             ORDER BY posts.created_at DESC
             LIMIT $max;
@@ -112,9 +116,11 @@ class Feed {
             SELECT posts.id
             FROM posts
             JOIN users ON posts.user_id = users.id
+            LEFT JOIN users_blocked ub ON ub.blocked_user_id = " . $_SESSION['user']->id . " AND ub.user_id = posts.user_id
             WHERE users.id = $userId
             AND posts.id NOT IN ($seenPosts)
             AND posts.head_id IS NULL
+            AND ub.user_id IS NULL
             $space
             ORDER BY posts.created_at DESC
             LIMIT 10;

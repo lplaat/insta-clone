@@ -63,6 +63,10 @@ if ((!$_SESSION['user']->isAdmin && $adminSettings) && $_SESSION['user']->name !
     header("location: /");
 }
 
+if ($_SESSION['user']->checkBlocked($mainPost->user)) {
+    header("location: /");
+}
+
 # set POST request to GET request
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     header("location: /post/$mainPost->shortId");
@@ -116,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 </div>';
 
             if ($mainPost->headId == null) {
-                if (!$mainPost->isLocked || $_SESSION['user']->isAdmin) {
+                if ((!$mainPost->isLocked || !$_SESSION['user']->isLocked) && !($_SESSION['user']->checkBlocked($mainPost->user)) || $_SESSION['user']->isAdmin) {
                     if (!$commentComment) {
                         echo $textareaDiv;
                     }
@@ -124,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 echo $scriptDiv;
             } else {
                 echo $scriptDiv;
-                if ((!$mainPost->isLocked || $_SESSION['user']->isAdmin) && !$commentComment) {
+                if ((!$mainPost->isLocked || !$_SESSION['user']->isLocked) && !($_SESSION['user']->checkBlocked($mainPost->user)) || $_SESSION['user']->isAdmin && !$commentComment) {
                     echo str_replace('replaceMe', 'comment-comment-margin', $textareaDiv);
                 } 
             }

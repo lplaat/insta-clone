@@ -29,7 +29,7 @@ if($post->headId != null) {
         echo '<div class="card-image">';
 
         if(count($post->images) == 1) {
-            echo '<figure class="image is-fullwitdh image is-1by1"><img src="/media/' . $image['path'] . '"></figure>';
+            echo '<figure class="image is-fullwitdh image is-1by1"><img src="/media/' . $post->images[0]['path'] . '"></figure>';
         }else {
             $pictureHtml = '';
             $i = 0;

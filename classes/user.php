@@ -219,4 +219,27 @@ class User {
         $stmt = $GLOBALS['conn']->prepare($query);
         $stmt->execute([$this->isDeleted, $this->id]);
     }
+
+    function setBlocked($blockedStatus) {
+        # update blocked status
+
+        if ($blockedStatus == true) {
+            $query = "INSERT INTO users_blocked (`user_id`, `blocked_user_id`) VALUES (?, ?);";
+        } else {
+            $query = "DELETE FROM users_blocked WHERE user_id = ? AND blocked_user_id = ?";
+        }
+
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$_SESSION['user']->id, $this->id]);
+    }
+
+    function checkBlocked($aboutUser) {
+        # checks if user is blocked
+        $query = "SELECT COUNT(*) FROM users_blocked WHERE user_id = ? AND blocked_user_id = ?";
+
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$aboutUser->id, $this->id]);
+
+        return $stmt->fetchColumn() != 0;
+    }
 }
