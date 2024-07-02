@@ -53,8 +53,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
 
                         <div class="field">
-                            <div class="control">
+                            <div class="control has-text-centered">
                                 <input class="button is-primary is-fullwidth" type="submit" value="login">
+                                <p class="mt-4">Don't have an account? Sign up <a href="/signup">here</a></p>
                             </div>
                         </div>
 

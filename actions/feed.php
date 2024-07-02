@@ -25,6 +25,6 @@ if($feed == null) {
 
 # Returns post given by the feed class
 Action::response(array(
-    'posts' => $feed->getPosts(),
+    'items' => $feed->getItems(),
     'token' => $feed->token
 ), 200);

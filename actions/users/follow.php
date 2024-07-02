@@ -52,7 +52,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $notification->aboutId = null;
         $notification->type = 1;
 
-        if (!$notification->checkAlreadyExistsFollow()) {
+        if (!$notification->checkAlreadyExistsFollow() && $user->followNotifications) {
             $notification->create();
         }
     }
@@ -65,7 +65,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $notification->aboutId = null;
         $notification->type = 2;
 
-        if (!$notification->checkAlreadyExistsFollow()) {
+        if (!$notification->checkAlreadyExistsFollow() && $user->followRequests) {
             $notification->create();
         }
 

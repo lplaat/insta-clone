@@ -6,6 +6,10 @@ require_once 'classes/user.php';
 require_once 'classes/post.php';
 require_once 'classes/media.php';
 
+if ($_SESSION['user']->isLocked) {
+    header('location: /');
+}
+
 $status = '';
 if($_SERVER['REQUEST_METHOD'] == "POST") {
     $text = isset($_POST["caption"]) ? $_POST["caption"] : "";
@@ -16,16 +20,18 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
     $post->user = $_SESSION['user'];
     $post->upload();
 
-    foreach ($_FILES["files"]["error"] as $key => $error) {
-        if ($error == UPLOAD_ERR_OK) {
-            $image = new Media(array(
-                'tmp_name' => $_FILES["files"]["tmp_name"][$key],
-                'name' => $_FILES["files"]["name"][$key],
-            ));
+    if(isset($_FILES["files"])){
+        foreach ($_FILES["files"]["error"] as $key => $error) {
+            if ($error == UPLOAD_ERR_OK) {
+                $image = new Media(array(
+                    'tmp_name' => $_FILES["files"]["tmp_name"][$key],
+                    'name' => $_FILES["files"]["name"][$key],
+                ));
 
-            $status = $image->saveImage();
-            if($status) {
-                $post->linkImage($image);
+                $status = $image->saveImage();
+                if($status) {
+                    $post->linkImage($image);
+                }
             }
         }
     }
@@ -36,6 +42,10 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 }
 
 ?>
+
+<section class="section pb-0 mobile-visible">
+    <h1 class="mt-4"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon back-button click-cursor" onclick="goBack()"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></h1>
+</section>
 
 <section class="section">
     <div class="container">

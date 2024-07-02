@@ -16,6 +16,13 @@ class User {
     public $theme;
     public $following;
     public $followers;
+    public $likeNotifications;
+    public $commentNotifications;
+    public $followNotifications;
+    public $followRequests;
+    public $isAdmin;
+    public $isLocked;
+    public $isDeleted;
     public $createdAt;
 
     function __construct($userId = null) {
@@ -46,7 +53,14 @@ class User {
         $this->theme = $result[0]['theme'];
         $this->following = $result[0]['following'];
         $this->followers = $result[0]['followers'];
+        $this->likeNotifications = $result[0]['like_notifications'];
+        $this->commentNotifications = $result[0]['comment_notifications'];
+        $this->followNotifications = $result[0]['follow_notifications'];
+        $this->followRequests = $result[0]['follow_requests'];
         $this->createdAt = $result[0]['created_at'];
+        $this->isAdmin = $result[0]['is_admin'];
+        $this->isLocked = $result[0]['is_locked'];
+        $this->isDeleted = $result[0]['is_deleted'];
 
         # Check for viewing rights from
         $this->viewingRights = true;
@@ -99,16 +113,24 @@ class User {
             `biography` = ?, 
             `avatar_path` = ?, 
             `private` = ?,
-            `theme` = ? 
+            `theme` = ?,
+            `like_notifications` = ?,
+            `comment_notifications` = ?,
+            `follow_notifications` = ?,
+            `follow_requests` = ?
             WHERE `id` = ?";
         $stmt = $GLOBALS['conn']->prepare($query);
-        $stmt->execute([$this->realName, $this->password, $this->email, $this->biography, $this->avatarPath, $this->private ? 1 : 0, $this->theme, $this->id]);
+        $stmt->execute([$this->realName, $this->password, $this->email, $this->biography, $this->avatarPath, $this->private ? 1 : 0, $this->theme, $this->likeNotifications ? 1 : 0, $this->commentNotifications ? 1 : 0, $this->followNotifications ? 1 : 0, $this->followRequests ? 1 : 0, $this->id]);
     }
 
     function login($username, $rawPassword){
         # Checks credentials and load in the user information
         $success = $this->getByName($username);
         if($success == null) {
+            return null;
+        }
+
+        if ($this->isDeleted) {
             return null;
         }
 
@@ -180,5 +202,21 @@ class User {
         $stmt = $GLOBALS["conn"]->prepare($qry);
         $stmt->execute([$this->id, $user->id, 2]);
         return $stmt->fetchColumn() != 0;
+    }
+
+    function setLocked() {
+        # update locked status
+        $query = "UPDATE users SET is_locked = ? WHERE id = ?";
+
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$this->isLocked, $this->id]);
+    }
+
+    function setDeleted() {
+        # update locked status
+        $query = "UPDATE users SET is_deleted = ? WHERE id = ?";
+
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->execute([$this->isDeleted, $this->id]);
     }
 }

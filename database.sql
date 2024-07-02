@@ -24,6 +24,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `username`, `password`, `real_name`, `email`, `is_admin`) VALUES
 (1, 'admin', '$2y$10$vfZep2kwQIvsIYoghgx5iu8E8OIoBLTVm4O5NvJJ/ABq.Y9IyPIHu', 'Administrator', 'admin@example.com', 1);
 
+
 CREATE TABLE `images_post` (
   `id` int(11) NOT NULL,
   `post_id` int(11) NOT NULL,
@@ -35,9 +36,13 @@ CREATE TABLE `posts` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `short_id` varchar(12) NOT NULL,
+  `head_id` int(11) DEFAULT NULL,
   `text` text NOT NULL,
   `liked_amount` int(11) NOT NULL DEFAULT 0,
   `comment_amount` int(11) NOT NULL DEFAULT 0,
+  `is_pinned` tinyint(1) NOT NULL DEFAULT FALSE,
+  `is_locked` tinyint(1) NOT NULL DEFAULT FALSE,
+  `is_deleted` BOOLEAN NOT NULL DEFAULT FALSE,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

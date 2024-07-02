@@ -2,6 +2,7 @@ body{
     width: 100%;
     height: 100vh;
 }
+
 .green-text {
 	color: #23d160 !important;
 }
@@ -16,10 +17,6 @@ body{
 
 .is-danger-navbar-item:hover {
     background-color: #b82845 !important;
-}
-
-.is-primary {
-    background-color: #958D79 !important; 
 }
 
 .menu {
@@ -47,6 +44,10 @@ body{
     margin-left: 8px;
     margin-top: 16px;
     border-left: 4px solid orange;
+}
+
+.card-content {
+    position: relative;
 }
 
 .heart-icon {
@@ -127,6 +128,178 @@ body{
     min-height: 100%;
 }
 
+.pointer-events {
+    pointer-events: all !important;
+}
+
 .feed-title {
     text-align: center;
+}
+
+.bottom-16 {
+    bottom: 16px;
+}
+
+.comment-post {
+    margin-left: 32px;
+    border-left: 4px solid orange;
+    padding-left: 10px; 
+}
+
+.comment-comment-post {
+    margin-left: 64px;
+    border-left: 4px solid rgb(0, 47, 255);
+    padding-left: 10px; 
+}
+
+.comment-comment-margin {
+    margin-left: 64px;
+    min-width: 0 !important;
+    width: calc(100% - 64px) !important;
+}
+
+.image-section {
+    width: 50%;
+}
+
+.carousel {
+    position: relative;
+    width: 100%;
+    overflow: hidden; /* Ensure no overflow */
+}
+
+.carousel-item {
+    display: none; /* Hide all items by default */
+    width: 100%;
+    height: auto;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.carousel-item.active {
+    display: block; /* Show only the active item */
+}
+
+
+.icon-transform {
+    transform: translate(0, 2px)
+}
+
+.lock-icon {
+    position: absolute;
+    transform: translate(-20px, -18px);
+}
+
+[data-theme=dark] .is-light-dark {
+    fill: #fff;
+}
+
+[data-theme=''] .is-light-dark {
+    fill: #fff;
+}
+  
+.head-container {
+    width: 100%;
+}
+
+@media only screen and (max-width: 768px) {
+    .head-container section{
+        width: 100%;
+        padding: 0;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .card-content {
+        margin-bottom: 16px;
+    }
+
+    .comment-post {
+        margin-left: 16px;
+    }
+    
+    .comment-comment-post {
+        margin-left: 32px;
+    }
+    
+    .comment-comment-margin {
+        margin-left: 32px;
+        width: calc(100% - 32px) !important;
+    }
+
+    .card-content .media * {
+        font-size: 99% !important;
+    }
+
+    .profile-picture {
+        transform: translate(-2px, -10px);
+    }
+
+    .home-text {
+        margin-bottom: 16px;
+    }
+
+    .sidebar-button {
+        display: inline !important;
+        transform: translate(5px, 5px);
+    }
+
+    .sidebar-button.close {
+        transform: translate(0px, 0px) !important;
+    }
+
+    .sidebar {
+        display: none;
+        position: absolute;
+        z-index: 16;
+    }
+
+    .bottom-8 {
+        bottom: 0px;
+    }
+
+    .back-button {
+        display: inline-block !important;
+        margin-right: 8px;
+    }
+
+    .mobile-visible {
+        display: block !important;
+    }
+}
+
+[data-theme=dark] .sidebar {
+    background-color: #14161a;
+}
+
+[data-theme=light] .sidebar {
+    background-color: white;
+}
+
+@media (prefers-color-scheme: dark) {
+    [data-theme=''] .sidebar {
+        background-color: #14161a;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    [data-theme=''] .sidebar {
+        background-color: white;
+    }
+}
+
+.sidebar-button {
+    display: none;
+}
+
+.back-button {
+    display: none;
+}
+
+.mobile-visible {
+    display: none;
 }

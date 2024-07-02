@@ -53,6 +53,12 @@ if($path == '/notifications') {
     exit();
 }
 
+# Search routes
+if ($path == '/search') {
+    include 'pages/search.php';
+    exit();
+}
+
 # User routes
 if($parts[1] == 'user') {
     if(count($parts) >= 3 AND $parts[2] != '') {
@@ -93,6 +99,10 @@ if($parts[1] == 'post') {
         if(isset($parts[3]) && $parts[3] == 'like'){
             # Post like action
             include 'actions/posts/like.php';
+            exit();
+        }else if(isset($parts[3]) && $parts[3] == 'comment'){
+            # Comment action
+            include 'actions/posts/comment.php';
             exit();
         }
 

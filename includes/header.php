@@ -32,13 +32,16 @@ if(!isset($jsonResponse)) {?>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <script defer src="/static/script.js"></script>
+        <script defer src="/static/bulma-carousel.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+        <link rel="stylesheet" href="/static/styles/bulma-carousel.min.css">
+        <link rel="stylesheet" href="/static/styles/bulma-switch.min.css">
         <link rel="stylesheet" href="/static/styles/app.css">
         <title>InstaClone</title>
     </head>
     <body>
 
-    <?php 
+    <?php
     if(!isset($emptyMain)) {
         include "components/sidebar.php";
     }

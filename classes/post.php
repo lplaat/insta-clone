@@ -7,12 +7,16 @@ require_once "classes/tools.php";
 class Post {
     public $id;
     public $shortId;
+    public $headId;
     public $text;
     public $likedAmount;
     public $commentAmount;
     public $following;
     public $images;
     public $user;
+    public $isPinned;
+    public $isLocked;
+    public $isDeleted;
     public $createdAt;
 
     function __construct($postId = null) {
@@ -34,9 +38,13 @@ class Post {
         # Set public from post variables
         $this->id = $result[0]['id'];
         $this->shortId = $result[0]['short_id'];
+        $this->headId = $result[0]['head_id'];
         $this->text = $result[0]['text'];
         $this->likedAmount = $result[0]['liked_amount'];
         $this->commentAmount = $result[0]['comment_amount'];
+        $this->isPinned = $result[0]['is_pinned'];
+        $this->isLocked = $result[0]['is_locked'];
+        $this->isDeleted = $result[0]['is_deleted'];
         $this->createdAt = $result[0]['created_at'];
 
         # Get the owner of the post
@@ -92,10 +100,10 @@ class Post {
         $this->shortId = Tools::generateRandomString(12);
 
         # Commit to the database
-        $query = "INSERT INTO posts (user_id, `text`, short_id) VALUES (?, ?, ?)";
+        $query = "INSERT INTO posts (user_id, `text`, short_id, head_id) VALUES (?, ?, ?, ?)";
 
         $stmt = $GLOBALS['conn']->prepare($query);
-        $stmt->execute([$this->user->id, $this->text, $this->shortId]);
+        $stmt->execute([$this->user->id, $this->text, $this->shortId, $this->headId]);
 
         $this->id = $GLOBALS['conn']->lastInsertId();
     }
@@ -173,7 +181,6 @@ class Post {
         # Update locked status
         $query = "UPDATE `posts` SET `is_locked` = ? WHERE `id` = ? OR `head_id` = ? OR `head_id` IN (SELECT `id` FROM `posts` WHERE `id` = ? OR `head_id` = ?);";
         $stmt = $GLOBALS['conn']->prepare($query);
-        var_dump($this->isLocked);
         $stmt->execute([$this->isLocked, $this->id, $this->id, $this->id, $this->id]);
     }
 

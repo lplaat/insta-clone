@@ -58,7 +58,7 @@ class Notification {
         $stmt->execute([$this->userId, $this->shortId, $this->type, $this->aboutUserId, $this->aboutId]);
     }
 
-    function checkAlreadyExistsLike() {
+    function checkAlreadyExists() {
         # Checks if notifications exists
         $qry = "SELECT COUNT(*) FROM notifications WHERE `user_id` = ? AND `type` = ? AND `about_user_id` = ? AND `about_id` = ?";
 

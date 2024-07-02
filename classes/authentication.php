@@ -15,6 +15,19 @@ class Authentication {
                 exit;
             } 
         }
+
+        # Check if user is deleted or locked
+        if ($_SESSION['user'] != null) {
+            $user = new User($_SESSION['user']->id);
+            if ($user->isLocked) {
+                $_SESSION['user'] = $user;
+            }
+            if ($user->isDeleted) {
+                Session::end();
+                header("location: /login"); 
+                exit;
+            }
+        }
     }
 
     public static function initSession() {

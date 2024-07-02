@@ -33,11 +33,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $private = isset($_POST['privacy']) ? $_POST['privacy'] : 'public';
         $theme = isset($_POST['theme']) ? $_POST['theme'] : 0;
 
+        $passwordRegex = '/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/';
+
         if(strlen($realName) < 3 || strlen($realName) > 24) {
             $status = 'realNameNotValid';
         } elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $status = 'emailNotValid';
-        }elseif((strlen($password) < 8 && strlen($password) > 18) && $password != '') {
+        }elseif(!preg_match($passwordRegex, $password) && $password != '') {
             $status = 'passwordNotValid';
         }
         
@@ -61,9 +63,33 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             header("Refresh: 3; url=/settings");
         }
+    } else if ($_POST['method'] == 'notificationSettings') {
+        # Changes notification settings
+        $likeNotifcations = isset($_POST['likeNotifications']) ? $_POST['likeNotifications'] : '';
+        $commentNotifications = isset($_POST['commentNotifications']) ? $_POST['commentNotifications'] : '';
+        $followNotifications = isset($_POST['followNotifications']) ? $_POST['followNotifications'] : '';
+        $followRequests = isset($_POST['followRequests']) ? $_POST['followRequests'] : '';
+
+        $_SESSION['user']->likeNotifications = $likeNotifcations;
+        $_SESSION['user']->commentNotifications = $commentNotifications;
+        $_SESSION['user']->followNotifications = $followNotifications;
+        $_SESSION['user']->followRequests = $followRequests;
+
+        $_SESSION['user']->update();
+        $status = 'successfullySavedNotificationSettings';
+        header("Refresh: 1; url=/settings");
+    } else if ($_POST['method'] == 'delete') {
+        $_SESSION['user']->isDeleted = true;
+        $_SESSION['user']->setDeleted();
+
+        header("location: /");
     }
 }
 ?>
+
+<section class="section pb-0 mobile-visible">
+    <h1 class="mt-4"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon back-button click-cursor" onclick="goBack()"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg>Settings</h1>
+</section>
 
 <div class="box user-settings">
     <form action="#" method="post">
@@ -120,7 +146,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             if($status != '') echo '<div class="field">';
             if($status == "successfullySavedSettings") echo '<p class="subtitle is-6 has-text-centered green-text">Settings successfully updated!</p>';
             if($status == "emailNotValid") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re email is not valid!</p>';
-            if($status == "passwordNotValid") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re passwords needs to be longer than 8 characters and shorter then 18!</p>';
+            if($status == "passwordNotValid") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re passwords needs to be minimal 8 characters, atleast one uppercase, one lowercase, one digit and one special character</p>';
             if($status == "realNameNotValid") echo '<p class="subtitle is-6 has-text-centered red-text">You\'re display name needs to be longer than 3 characters and shorter then 12!</p>';
             if($status != '') echo '</div>';
         ?>
@@ -162,8 +188,50 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 </div>
 
 <div class="box">
+    <form method="POST">
+        <h2 class="has-text-centered">Notification settings</h2>
+
+        <input type="input" name="method" value="notificationSettings" hidden>
+
+        <div class="has-text-centered mb-4">
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <input id="likeNotifications" type="checkbox" name="likeNotifications" class="switch" <?php if($_SESSION['user']->likeNotifications) echo 'checked="checked"' ?>>
+                        <label for="likeNotifications">like notifications</label>
+                    </div> 
+                    <div class="field">
+                        <input id="commentNotifications" type="checkbox" name="commentNotifications" class="switch" <?php if($_SESSION['user']->commentNotifications) echo 'checked="checked"' ?>>
+                        <label for="commentNotifications">comment notifications</label>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <input id="followNotifitcations" type="checkbox" name="followNotifications" class="switch" <?php if($_SESSION['user']->followNotifications) echo 'checked="checked"' ?>>
+                        <label for="followNotifitcations">follow notifications</label>
+                    </div>
+                    <div class="field">
+                        <input id="followRequests" type="checkbox" name="followRequests" class="switch" <?php if($_SESSION['user']->followRequests) echo 'checked="checked"' ?>>
+                        <label for="followRequests">follow requests</label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <?php
+            if($status != '') echo '<div class="field">';
+            if($status == 'successfullySavedNotificationSettings') echo '<p class="subtitle is-6 has-text-centered green-text">Notification settings are saved successfully!</p>';
+            if($status != '') echo '</div>';
+        ?>
+        <input class="has-text-centered button is-fullwidth is-success" type="submit" value="Save Changes">
+    </form>
+</div>
+
+<div class="box">
     <h2 class="has-text-centered">Delete Account</h2>
-    <button class="button is-danger is-fullwidth">Delete Account</button>
+    <form method="POST">
+        <button type="submit" name="method" class="button is-danger is-fullwidth" value="delete">Delete Account</button>
+    </form>
 </div>
 
 <?php

@@ -4,8 +4,16 @@
 require 'includes/header.php';
 require_once 'classes/post.php';
 
-$post = new Post();
-$return = $post->getByShortId($GLOBALS['postShortId']);
+$mainPost = new Post();
+$return = $mainPost->getByShortId($GLOBALS['postShortId']);
+
+$adminSettings = isset($_GET['adminSettings']) ?  $_GET['adminSettings'] : false;
+
+$unlockPost = isset($_POST['unlockPost']) ? $_POST['unlockPost'] : false;
+$locked = isset($_POST["locked"]) ? $_POST["locked"] : false;
+$deleted = isset($_POST['deleted']) ? $_POST['deleted'] : false;
+$undeleted = isset($_POST['undeleted']) ? $_POST['undeleted'] : false;
+
 if($return == null) {
     header("location: /"); 
 }
@@ -51,7 +59,7 @@ if ($deleted) {
 }
 
 # Validates if user is admin
-if (!$_SESSION['user']->isAdmin && $adminSettings) {
+if ((!$_SESSION['user']->isAdmin && $adminSettings) && $_SESSION['user']->name != $mainPost->user->name) {
     header("location: /");
 }
 
@@ -61,9 +69,66 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 }
 ?>
 
+<section class="section pb-0 mobile-visible">
+    <h1 class="mt-4"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon back-button click-cursor" onclick="goBack()"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg>Post</h1>
+</section>
+
 <section class="section is-fullheight">
+    <?php
+        if ($adminSettings) {
+            echo "<form method=\"POST\" class=\"has-text-centered\">
+            <div>";
+            if (!$mainPost->isDeleted) {
+                echo "<button type=\"submit\" name=\"deleted\"class=\"button is-danger mr-4\" value=\"true\">Delete post</button>";
+            } else if ($mainPost->isDeleted && $_SESSION['user']->isAdmin) {
+                echo "<button type=\"submit\" name=\"undeleted\"class=\"button is-danger mr-4\" value=\"true\">Undelete post</button>";
+            } 
+            
+            if (!$mainPost->isLocked && $_SESSION['user']->isAdmin) {
+                echo "<button type=\"submit\" name=\"locked\"class=\"button is-warning\" value=\"true\">Lock post</button>";
+            } else if (!$commentComment && $_SESSION['user']->isAdmin) {
+                echo "<button type=\"submit\" name=\"unlockPost\" class=\"button is-warning\" value=\"true\">Unlock post</button>";
+            }
+            
+            echo "</div>
+            </form>";
+        }
+    ?>
     <div class="container is-fullheight">
-        <?php require 'components/post.php'?>
+        <?php 
+            if($mainPost->headId != null) {
+                $post = new Post($mainPost->headId);
+                require 'components/post.php';
+            }
+
+            $post = $mainPost;
+            require 'components/post.php';
+
+            $textareaDiv = '
+                <div class="container mb-5">
+                    <textarea class="comment-field textarea has-fixed-size replaceMe" id="content" class="textarea comment" placeholder="Your comment" maxlength="250"></textarea>
+                    <button class="button right-side bottom-16 is-primary" onclick="commentIt(event, \'' . $post->shortId . '\')">Comment</button>
+                </div>';
+
+            $scriptDiv = '
+                <div class="container is-fullheight post-holder">
+                    <script class="feed-settings" type="application/json">{"type": "comments", "data": "' . $post->shortId . '", "error": false}</script>
+                </div>';
+
+            if ($mainPost->headId == null) {
+                if (!$mainPost->isLocked || $_SESSION['user']->isAdmin) {
+                    if (!$commentComment) {
+                        echo $textareaDiv;
+                    }
+                }
+                echo $scriptDiv;
+            } else {
+                echo $scriptDiv;
+                if ((!$mainPost->isLocked || $_SESSION['user']->isAdmin) && !$commentComment) {
+                    echo str_replace('replaceMe', 'comment-comment-margin', $textareaDiv);
+                } 
+            }
+        ?>
     </div>
 </section>
 
