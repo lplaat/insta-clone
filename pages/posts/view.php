@@ -34,14 +34,14 @@ if($mainPost->headId != null) {
 # Set post locked
 if(!$commentComment) {
     if ($locked) {
-        $mainPost->isLocked = true;
-        $headPost->isLocked = true;
+        $mainPost->isLocked = 1;
+        $headPost->isLocked = 1;
         $mainPost->setLocked();
         $headPost->setLocked();
         header("location: /post/$mainPost->shortId");
     } else if ($unlockPost) {
-        $mainPost->isLocked = false;
-        $headPost->isLocked = false;
+        $mainPost->isLocked = 0;
+        $headPost->isLocked = 0;
         $mainPost->setLocked();
         $headPost->setLocked();
     }
