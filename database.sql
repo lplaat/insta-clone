@@ -22,7 +22,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `users` (`id`, `username`, `password`, `real_name`, `email`, `is_admin`) VALUES
-(1, 'admin', '$2y$10$vfZep2kwQIvsIYoghgx5iu8E8OIoBLTVm4O5NvJJ/ABq.Y9IyPIHu', 'Administrator', 'admin@example.com', '1') ;
+(1, 'admin', '$2y$10$vfZep2kwQIvsIYoghgx5iu8E8OIoBLTVm4O5NvJJ/ABq.Y9IyPIHu', 'Administrator', 'admin@example.com', '1');
 
 CREATE TABLE `images_post` (
   `id` int(11) NOT NULL,
