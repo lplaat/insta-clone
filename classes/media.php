@@ -23,7 +23,7 @@ class Media {
         }
 
         $check = getimagesize($this->file["tmp_name"]);
-        if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" ) {
+        if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" && $imageFileType != "webp") {
             return 'invalidImageFormat';
         } 
 
