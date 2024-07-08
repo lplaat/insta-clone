@@ -8,7 +8,6 @@ require_once "classes/authentication.php";
 
 # Start session, database and maybe error logging
 $GLOBALS['conn'] = Database::connect();
-Debug::enable();
 Session::start();
 Authentication::verify();
 
